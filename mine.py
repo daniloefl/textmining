@@ -52,11 +52,10 @@ for doc in doc_set:
   text = [p_stemmer.stem(i) for i in stopped_tokens]
   texts.append(text)
 
-
+print texts
 dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
-print(corpus)
 
-ldamodel = models.ldamodel.LdaModel(corpus, num_topics=19, id2word = dictionary, passes=20)
-print(ldamodel.print_topics(num_topics=10, num_words=5))
+ldamodel = models.ldamodel.LdaModel(corpus, num_topics=19, id2word = dictionary, passes=50)
+print(ldamodel.print_topics(num_topics=19, num_words=10))
 

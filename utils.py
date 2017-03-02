@@ -56,6 +56,8 @@ class Source(object):
       if v == u'”': v = ' '
       if v == u'“': v = ' '
       s += v
+    s.replace('AI-5','AI5')
+    s.replace('ai-5','ai5')
     return s
 
 class BBCSource(Source):
