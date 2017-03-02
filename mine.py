@@ -3,16 +3,20 @@ from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models
+import os
+import utils
 
-
-doc_a = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
-doc_b = "My mother spends a lot of time driving my brother around to baseball practice."
-doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."
-doc_d = "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better."
-doc_e = "Health professionals say that brocolli is good for your health."
-
-# compile sample documents into a list
-doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
+doc_set = []
+doc_id = []
+for day in os.listdir('data/'):
+  for s in utils.sources:
+    source = utils.sources[s]
+    output = 'data/%s/%s' % (day, s)
+    f = open("%s/front_clean.txt" % output)
+    doc = ""
+    for i in f.readlines(): doc += i
+    doc_set.append(doc)
+    doc_id.append('%s/%s' % (day, s))
 
 tokenizer = RegexpTokenizer(r'\w+')
 
@@ -21,10 +25,28 @@ p_stemmer = PorterStemmer()
 
 texts = []
 for doc in doc_set:
-  raw = doc_a.lower()
+  raw = doc.lower()
   tokens = tokenizer.tokenize(raw)
-  en_stop = set(stopwords.words('english'))
-  stopped_tokens = [i for i in tokens if not i in en_stop]
+  lang_stop = set(stopwords.words('portuguese'))
+  lang_stop.add("diz")
+  lang_stop.add("folhapress")
+  lang_stop.add("agencia")
+  lang_stop.add("globo")
+  lang_stop.add("foto")
+  lang_stop.add("2017")
+  lang_stop.add("sao")
+  lang_stop.add("veja")
+  lang_stop.add("kim")
+  lang_stop.add("maxson")
+  lang_stop.add("hugh")
+  lang_stop.add("sobr")
+  lang_stop.add("vai")
+  lang_stop.add("passa")
+  lang_stop.add("ano")
+  lang_stop.add("rs")
+  lang_stop.add("ser")
+  lang_stop.add("morar")
+  stopped_tokens = [i for i in tokens if not i in lang_stop]
 
   # stem token
   text = [p_stemmer.stem(i) for i in stopped_tokens]
@@ -35,6 +57,6 @@ dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
 print(corpus)
 
-ldamodel = models.ldamodel.LdaModel(corpus, num_topics=5, id2word = dictionary, passes=20)
-print(ldamodel.print_topics(num_topics=5, num_words=5))
+ldamodel = models.ldamodel.LdaModel(corpus, num_topics=19, id2word = dictionary, passes=20)
+print(ldamodel.print_topics(num_topics=10, num_words=5))
 
