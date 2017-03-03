@@ -1,5 +1,35 @@
 # textmining
 
+This generates graphs showing how strongly related different documents
+are connected. This is done per day, so that one can know how this changes
+daily.
+
+It is configured to download five different news paper first pages:
+O Globo, Folha da São Paulo, Deutsche Welle, Carta Capital and BBC.
+BBC and Deutsche Welle are downloaded in their Brazilian versins.
+
+To run it, one must download each day their front page news using:
+
+```
+python get_data.py
+```
+
+One can then clean up the documents, removing publicity and authorship
+information:
+
+```
+python clean_data.py
+```
+
+The actual Lattent Dirichlet Allocation analysis is done with:
+
+```
+python mine.py
+```
+
+
+This also  
+
 # Dependencies installation
 
 ```
@@ -15,5 +45,6 @@ $ cd gensim-1.0.0
 $ sudo python setup.py install
 $ cd ..
 $ sudo rm -rf gensim-1.0.0
+$ sudo apt install wget lynx
 ```
 
