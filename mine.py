@@ -56,9 +56,12 @@ for doc in doc_set:
 dictionary = corpora.Dictionary(texts)
 corpus = [dictionary.doc2bow(text) for text in texts]
 
-ldamodel = models.ldamodel.LdaModel(corpus, num_topics=10, id2word = dictionary, passes=1)
-topics = ldamodel.print_topics(10, 10)
+ldamodel = models.ldamodel.LdaModel(corpus, num_topics=5, id2word = dictionary, passes=20)
+topics = ldamodel.print_topics(5)
 for i in range(0, len(topics)):
-  print "Topic #%d: %s" %(i+1, topics[i])
-
+  print "Topic #%d: %s" %(i, topics[i])
+print "--"
+print "Topics per document:"
+for did in range(0, len(texts)):
+  print "Document %s: %s" % (doc_id[did], ldamodel.get_document_topics(dictionary.doc2bow(texts[did])))
 
