@@ -263,3 +263,174 @@ sources = {
            'dw':     DWSource('http://www.dw.com/pt-br/not%C3%ADcias/brasil/s-7142'),
           }
 
+
+
+def save_fulltopic_graph(topics, fname = ".png"):
+  import networkx as nx
+  import matplotlib.pyplot as plt
+  import matplotlib.gridspec as gridspec
+  import math
+  plt.figure(figsize=(10,10))
+  G = nx.Graph()
+  pos_fixed = {}
+  center = []
+  added_word = []
+  node_topics = []
+  node_words = []
+  for t in range(0, len(topics)):
+    G.add_node(t)
+    node_topics.append(t)
+    for word, weight in topics[t][1]:
+      if not word in added_word:
+        G.add_node(word)
+        added_word.append(word)
+        node_words.append(word)
+      G.add_edge(t, word, weight = 500*weight, length=weight)
+  pos=nx.spring_layout(G, weight = 'weight', scale = 10)
+  nx.draw_networkx_nodes(G, pos, node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
+  nx.draw_networkx_nodes(G, pos, node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
+  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  #nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+  #nx.draw(G, pos, node_size=5000, node_color='b', alpha=0.5, edge_color='r', width=2)
+  nx.draw_networkx_labels(G,pos, font_size=10,font_family='sans-serif')
+  plt.axis("off")
+  plt.savefig("topic_all%s" % (fname))
+
+def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
+  import networkx as nx
+  import matplotlib.pyplot as plt
+  plt.figure(figsize=(10,10))
+  G = nx.Graph()
+  added = []
+  node_docs = []
+  node_words = []
+  for doc in topics:
+    docname = doc
+    t = topics[doc]
+    G.add_node(docname)
+    node_docs.append(docname)
+    for word, weight in t:
+      if not word in added:
+        G.add_node(word)
+        added.append(word)
+        node_words.append(word)
+      G.add_edge(docname, word, weight = 500*weight)
+  pos=nx.spring_layout(G, scale=10) # positions for all nodes
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist = node_docs, node_color='g', alpha=0.8)
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist = node_words, node_color='b', alpha=0.8)
+  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
+  plt.axis("off")
+  plt.savefig(fname)
+
+def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_graph.png"):
+  import networkx as nx
+  import matplotlib.pyplot as plt
+  plt.figure(figsize=(20,20))
+  G = nx.Graph()
+  added_word = []
+  node_docs = []
+  node_words = []
+  for doc in doc_topics:
+    docname = doc
+    t = doc_topics[doc]
+    G.add_node(docname)
+    node_docs.append(docname)
+    for topic, weight in t:
+      for word, weight_w in topics[topic][1]:
+        if not word in added_word:
+          G.add_node(word)
+          added_word.append(word)
+          node_words.append(word)
+        G.add_edge(docname, word, weight = 500*weight_w*weight)
+  pos=nx.spring_layout(G, scale=20) # positions for all nodes
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='g', alpha=0.8)
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
+  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
+  plt.axis("off")
+  plt.savefig(fname)
+
+def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
+  import networkx as nx
+  import matplotlib.pyplot as plt
+  plt.figure(figsize=(20,20))
+  G = nx.Graph()
+  added = []
+  added_word = []
+  node_docs = []
+  node_topics = []
+  node_words = []
+  for doc in doc_topics:
+    docname = doc
+    t = doc_topics[doc]
+    G.add_node(docname)
+    node_docs.append(docname)
+    for topic, weight in t:
+      if not topic in added:
+        G.add_node(topic)
+        added.append(topic)
+        node_topics.append(topic)
+        for word, weight_w in topics[topic][1]:
+          if not word in added_word:
+            G.add_node(word)
+            added_word.append(word)
+            node_words.append(word)
+          G.add_edge(topic, word, weight = 500*weight_w)
+      G.add_edge(docname, topic, weight = 500*weight)
+  pos=nx.spring_layout(G, scale=20) # positions for all nodes
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='r', alpha=0.8)
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
+  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
+  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
+  plt.axis("off")
+  plt.savefig(fname)
+
+def save_doc_word_time(docs, topics, fname = ".png"):
+  import matplotlib.pyplot as plt
+  import datetime
+  from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
+  from numpy import arange
+  x = [0]*len(docs.keys())
+  y = {}
+  word_list = []
+  date_id = 0
+  for date in docs:
+    x[date_id] = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
+    for doc in docs[date]:
+      docname = doc
+      if not docname in y:
+        y[docname] = {}
+      t = docs[date][doc]
+      for topic, weight in t:
+        for word, weight_w in topics[topic][1]:
+          if not word in word_list:
+            word_list.append(word)
+          if not word in y[docname]:
+            y[docname][word] = [0]*len(docs)
+          y[docname][word][date_id] = weight*weight_w
+    date_id += 1
+  
+  for word in word_list:
+    fig, ax = plt.subplots()
+    count = 0
+    ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
+    lc = ['b', 'b', 'b', 'b', 'r', 'r', 'r', 'r']
+    for docname in y:
+      if not word in y[docname]: continue
+      plt.plot_date(x, y[docname][word], label=docname, linewidth=2, linestyle = ls[count], color=lc[count])
+      count += 1
+    plt.legend(loc="upper left")
+    plt.xlabel("Date")
+    plt.ylabel("Probability")
+    ax.set_xlim(x[0], x[-1])
+
+    ax.xaxis.set_major_locator(DayLocator())
+    ax.xaxis.set_minor_locator(HourLocator(arange(0, 25, 6)))
+    ax.xaxis.set_major_formatter(DateFormatter('%d/%m/%Y'))
+    ax.fmt_xdata = DateFormatter('%d/%m/%Y')
+    fig.autofmt_xdate()
+
+    ax.grid(True)
+    plt.savefig("pertime_%s%s" % (word, fname))
