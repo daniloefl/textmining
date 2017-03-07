@@ -11,7 +11,6 @@ def main():
     except:
       pass
     os.system('wget -O %s/front.html %s' % (output, source.www))
-    os.system('lynx -dump -nolist %s/front.html > %s/front.txt' % (output, output))
 
 if __name__ == "__main__":
   main()

@@ -270,7 +270,7 @@ def save_fulltopic_graph(topics, fname = ".png"):
   import matplotlib.pyplot as plt
   import matplotlib.gridspec as gridspec
   import math
-  plt.figure(figsize=(10,10))
+  fig = plt.figure(figsize=(10,10))
   G = nx.Graph()
   pos_fixed = {}
   center = []
@@ -295,11 +295,12 @@ def save_fulltopic_graph(topics, fname = ".png"):
   nx.draw_networkx_labels(G,pos, font_size=10,font_family='sans-serif')
   plt.axis("off")
   plt.savefig("topic_all%s" % (fname))
+  plt.close(fig)
 
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   import networkx as nx
   import matplotlib.pyplot as plt
-  plt.figure(figsize=(10,10))
+  fig = plt.figure(figsize=(10,10))
   G = nx.Graph()
   added = []
   node_docs = []
@@ -322,11 +323,12 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
   plt.axis("off")
   plt.savefig(fname)
+  plt.close(fig)
 
 def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
   import matplotlib.pyplot as plt
-  plt.figure(figsize=(20,20))
+  fig = plt.figure(figsize=(20,20))
   G = nx.Graph()
   added_word = []
   node_docs = []
@@ -350,11 +352,12 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
   nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
   plt.axis("off")
   plt.savefig(fname)
+  plt.close(fig)
 
 def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
   import matplotlib.pyplot as plt
-  plt.figure(figsize=(20,20))
+  fig = plt.figure(figsize=(20,20))
   G = nx.Graph()
   added = []
   added_word = []
@@ -386,6 +389,7 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
   plt.axis("off")
   plt.savefig(fname)
+  plt.close(fig)
 
 def save_doc_word_time(docs, topics, fname = ".png"):
   import matplotlib.pyplot as plt
@@ -434,3 +438,4 @@ def save_doc_word_time(docs, topics, fname = ".png"):
 
     ax.grid(True)
     plt.savefig("pertime_%s%s" % (word, fname))
+    plt.close(fig)
