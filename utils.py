@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from presentation import showWord
+
 import re
 import codecs
 
@@ -278,14 +280,14 @@ def save_fulltopic_graph(topics, fname = ".png"):
   node_topics = []
   node_words = []
   for t in range(0, len(topics)):
-    G.add_node(t)
-    node_topics.append(t)
+    G.add_node(showWord(t))
+    node_topics.append(showWord(t))
     for word, weight in topics[t][1]:
       if not word in added_word:
-        G.add_node(word)
+        G.add_node(showWord(word))
         added_word.append(word)
-        node_words.append(word)
-      G.add_edge(t, word, weight = 500*weight, length=weight)
+        node_words.append(showWord(word))
+      G.add_edge(showWord(t), showWord(word), weight = 500*weight, length=weight)
   pos=nx.spring_layout(G, weight = 'weight', scale = 10)
   nx.draw_networkx_nodes(G, pos, node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
   nx.draw_networkx_nodes(G, pos, node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
@@ -308,14 +310,14 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   for doc in topics:
     docname = doc
     t = topics[doc]
-    G.add_node(docname)
-    node_docs.append(docname)
+    G.add_node(showWord(docname))
+    node_docs.append(showWord(docname))
     for word, weight in t:
       if not word in added:
-        G.add_node(word)
+        G.add_node(showWord(word))
         added.append(word)
-        node_words.append(word)
-      G.add_edge(docname, word, weight = 500*weight)
+        node_words.append(showWord(word))
+      G.add_edge(showWord(docname), showWord(word), weight = 500*weight)
   pos=nx.spring_layout(G, scale=10) # positions for all nodes
   nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist = node_docs, node_color='g', alpha=0.8)
   nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist = node_words, node_color='b', alpha=0.8)
@@ -336,15 +338,15 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
   for doc in doc_topics:
     docname = doc
     t = doc_topics[doc]
-    G.add_node(docname)
-    node_docs.append(docname)
+    G.add_node(showWord(docname))
+    node_docs.append(showWord(docname))
     for topic, weight in t:
       for word, weight_w in topics[topic][1]:
         if not word in added_word:
-          G.add_node(word)
+          G.add_node(showWord(word))
           added_word.append(word)
-          node_words.append(word)
-        G.add_edge(docname, word, weight = 500*weight_w*weight)
+          node_words.append(showWord(word))
+        G.add_edge(showWord(docname), showWord(word), weight = 500*weight_w*weight)
   pos=nx.spring_layout(G, scale=20) # positions for all nodes
   nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='g', alpha=0.8)
   nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
@@ -367,20 +369,20 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   for doc in doc_topics:
     docname = doc
     t = doc_topics[doc]
-    G.add_node(docname)
-    node_docs.append(docname)
+    G.add_node(showWord(docname))
+    node_docs.append(showWord(docname))
     for topic, weight in t:
       if not topic in added:
-        G.add_node(topic)
+        G.add_node(showWord(topic))
         added.append(topic)
-        node_topics.append(topic)
+        node_topics.append(showWord(topic))
         for word, weight_w in topics[topic][1]:
           if not word in added_word:
-            G.add_node(word)
+            G.add_node(showWord(word))
             added_word.append(word)
-            node_words.append(word)
-          G.add_edge(topic, word, weight = 500*weight_w)
-      G.add_edge(docname, topic, weight = 500*weight)
+            node_words.append(showWord(word))
+          G.add_edge(showWord(topic), showWord(word), weight = 500*weight_w)
+      G.add_edge(showWord(docname), showWord(topic), weight = 500*weight)
   pos=nx.spring_layout(G, scale=20) # positions for all nodes
   nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='r', alpha=0.8)
   nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
