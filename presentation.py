@@ -1,4 +1,5 @@
 
+# coding: utf-8
 wordMap = {
            "president": "president\npresidente",
            "dilma": "Dilma",
