@@ -1,20 +1,21 @@
 
 # coding: utf-8
 wordMap = {
-           "president": "president\npresidente",
-           "dilma": "Dilma",
-           "temer": "Temer",
-           "oglobo": "O Globo",
-           "folha": "Folha de S. Paulo",
-           "bbc": "BBC Brasil",
-           "dw": "DW Brasil",
-           "carta": "Carta Capital",
-           "brasil": "Brasil",
-           "mulher": "woman\nmulher",
-           "comissao": "comission\ncomissão",
-           "dia": "day\ndia",
-           "nao": "no\nnão",
-           "impeach": "impeachment",
+           "president": u"president\npresidente",
+           "dilma": u"Dilma",
+           "temer": u"Temer",
+           "oglobo": u"O Globo",
+           "folha": u"Folha de S. Paulo",
+           "bbc": u"BBC Brasil",
+           "dw": u"DW Brasil",
+           "carta": u"Carta Capital",
+           "brasil": u"Brasil",
+           "mulher": u"woman\nmulher",
+           "comissao": u"comission\ncomissão",
+           "dia": u"day\ndia",
+           "nao": u"no\nnão",
+           "impeach": u"impeachment",
+           "processo": u"process\nprocesso",
            }
 
 def showWord(w):
