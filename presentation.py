@@ -5,7 +5,7 @@ wordMap = {
            "dilma": u"Dilma",
            "temer": u"Temer",
            "oglobo": u"O Globo",
-           "folha": u"Folha de S. Paulo",
+           "folha": u"Folha de SP",
            "bbc": u"BBC Brasil",
            "dw": u"DW Brasil",
            "carta": u"Carta Capital",
