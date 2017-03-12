@@ -269,6 +269,8 @@ sources = {
 
 def save_fulltopic_graph(topics, fname = ".png"):
   import networkx as nx
+  import matplotlib
+  matplotlib.use('Agg')
   import matplotlib.pyplot as plt
   import matplotlib.gridspec as gridspec
   import math
@@ -301,6 +303,8 @@ def save_fulltopic_graph(topics, fname = ".png"):
 
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   import networkx as nx
+  import matplotlib
+  matplotlib.use('Agg')
   import matplotlib.pyplot as plt
   fig = plt.figure(figsize=(10,10))
   G = nx.Graph()
@@ -329,6 +333,8 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
 
 def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
+  import matplotlib
+  matplotlib.use('Agg')
   import matplotlib.pyplot as plt
   fig = plt.figure(figsize=(20,20))
   G = nx.Graph()
@@ -358,6 +364,8 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
 
 def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
+  import matplotlib
+  matplotlib.use('Agg')
   import matplotlib.pyplot as plt
   fig = plt.figure(figsize=(20,20))
   G = nx.Graph()
