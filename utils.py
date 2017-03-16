@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from presentation import showWord
+
 import re
 import codecs
 
@@ -267,10 +269,18 @@ sources = {
 
 def save_fulltopic_graph(topics, fname = ".png"):
   import networkx as nx
-  import matplotlib.pyplot as plt
-  import matplotlib.gridspec as gridspec
+  #import matplotlib
+  #matplotlib.use('Agg')
+  #import matplotlib.pyplot as plt
+  #import matplotlib.gridspec as gridspec
+  #import math
+  #fig = plt.figure(figsize=(10,10))
   import math
-  fig = plt.figure(figsize=(10,10))
+  from bokeh.plotting import figure, show, output_file, save
+  from bokeh.resources import CDN
+  output_file(fname, title = "")
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+
   G = nx.Graph()
   pos_fixed = {}
   center = []
@@ -278,29 +288,46 @@ def save_fulltopic_graph(topics, fname = ".png"):
   node_topics = []
   node_words = []
   for t in range(0, len(topics)):
-    G.add_node(t)
-    node_topics.append(t)
+    G.add_node(showWord(t))
+    node_topics.append(showWord(t))
     for word, weight in topics[t][1]:
       if not word in added_word:
-        G.add_node(word)
+        G.add_node(showWord(word))
         added_word.append(word)
-        node_words.append(word)
-      G.add_edge(t, word, weight = 500*weight, length=weight)
-  pos=nx.spring_layout(G, weight = 'weight', scale = 10)
-  nx.draw_networkx_nodes(G, pos, node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
-  nx.draw_networkx_nodes(G, pos, node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
-  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
-  #nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-  #nx.draw(G, pos, node_size=5000, node_color='b', alpha=0.5, edge_color='r', width=2)
-  nx.draw_networkx_labels(G,pos, font_size=10,font_family='sans-serif')
-  plt.axis("off")
-  plt.savefig("topic_all%s" % (fname))
-  plt.close(fig)
+        node_words.append(showWord(word))
+      G.add_edge(showWord(t), showWord(word), weight = 100*weight, length=weight)
+  pos=nx.spring_layout(G, scale=1) # positions for all nodes
+  for edge in G.edges():
+    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
+  for node in G.nodes():
+    fc = 'gray'
+    if node in node_topics:
+      fc = 'cyan'
+    elif node in node_words:
+      fc = 'gray'
+    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
+             text_font_size = "10px", text_align = "center", text_baseline = "middle")
+  #pos=nx.spring_layout(G, weight = 'weight', scale = 1)
+  #nx.draw_networkx_nodes(G, pos, node_size=5000, nodelist=node_topics, node_color='g', alpha=0.8)
+  #nx.draw_networkx_nodes(G, pos, node_size=5000, nodelist=node_words, node_color='b', alpha=0.8)
+  #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  #nx.draw_networkx_labels(G,pos, font_size=10,font_family='sans-serif')
+  #plt.axis("off")
+  #plt.savefig("topic_all%s" % (fname))
+  #plt.close(fig)
+  save(fig, "topic_all%s" % (fname), title = "")
 
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   import networkx as nx
-  import matplotlib.pyplot as plt
-  fig = plt.figure(figsize=(10,10))
+  #import matplotlib
+  #matplotlib.use('Agg')
+  #import matplotlib.pyplot as plt
+  #fig = plt.figure(figsize=(10,10))
+  from bokeh.plotting import figure, show, output_file, save
+  from bokeh.resources import CDN
+  output_file(fname, title = "")
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
   G = nx.Graph()
   added = []
   node_docs = []
@@ -308,27 +335,46 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   for doc in topics:
     docname = doc
     t = topics[doc]
-    G.add_node(docname)
-    node_docs.append(docname)
+    G.add_node(showWord(docname))
+    node_docs.append(showWord(docname))
     for word, weight in t:
       if not word in added:
-        G.add_node(word)
+        G.add_node(showWord(word))
         added.append(word)
-        node_words.append(word)
-      G.add_edge(docname, word, weight = 500*weight)
-  pos=nx.spring_layout(G, scale=10) # positions for all nodes
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist = node_docs, node_color='g', alpha=0.8)
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist = node_words, node_color='b', alpha=0.8)
-  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
-  nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
-  plt.axis("off")
-  plt.savefig(fname)
-  plt.close(fig)
+        node_words.append(showWord(word))
+      G.add_edge(showWord(docname), showWord(word), weight = 100*weight)
+  pos=nx.spring_layout(G, scale=1) # positions for all nodes
+  for edge in G.edges():
+    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
+  for node in G.nodes():
+    fc = 'gray'
+    if node in node_docs:
+      fc = 'cyan'
+    elif node in node_words:
+      fc = 'gray'
+    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
+             text_font_size = "10px", text_align = "center", text_baseline = "middle")
+  #pos=nx.spring_layout(G, scale=10) # positions for all nodes
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist = node_docs, node_color='g', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist = node_words, node_color='b', alpha=0.8)
+  #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  #nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
+  #plt.axis("off")
+  #plt.savefig(fname)
+  #plt.close(fig)
+  save(fig, fname, title = "")
 
 def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
-  import matplotlib.pyplot as plt
-  fig = plt.figure(figsize=(20,20))
+  #import matplotlib
+  #matplotlib.use('Agg')
+  #import matplotlib.pyplot as plt
+  #fig = plt.figure(figsize=(20,20))
+  from bokeh.plotting import figure, show, output_file, save
+  from bokeh.resources import CDN
+  output_file(fname, title = "")
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
   G = nx.Graph()
   added_word = []
   node_docs = []
@@ -336,31 +382,46 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
   for doc in doc_topics:
     docname = doc
     t = doc_topics[doc]
-    G.add_node(docname)
-    node_docs.append(docname)
+    G.add_node(showWord(docname))
+    node_docs.append(showWord(docname))
     for topic, weight in t:
       for word, weight_w in topics[topic][1]:
         if not word in added_word:
-          G.add_node(word)
+          G.add_node(showWord(word))
           added_word.append(word)
-          node_words.append(word)
-        G.add_edge(docname, word, weight = 500*weight_w*weight)
-  pos=nx.spring_layout(G, scale=20) # positions for all nodes
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='g', alpha=0.8)
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
-  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
-  nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
-  plt.axis("off")
-  plt.savefig(fname)
-  plt.close(fig)
+          node_words.append(showWord(word))
+        G.add_edge(showWord(docname), showWord(word), weight = 100*weight_w*weight)
+  pos=nx.spring_layout(G, scale=1) # positions for all nodes
+  for edge in G.edges():
+    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
+  for node in G.nodes():
+    fc = 'gray'
+    if node in node_docs:
+      fc = 'cyan'
+    elif node in node_words:
+      fc = 'gray'
+    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
+             text_font_size = "10px", text_align = "center", text_baseline = "middle")
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_docs, node_color='g', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_words, node_color='b', alpha=0.8)
+  #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  #nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
+  #plt.axis("off")
+  #plt.savefig(fname)
+  #plt.close(fig)
+  save(fig, fname, title = "")
 
 def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
+  #import matplotlib
+  #matplotlib.use('Agg')
   #import matplotlib.pyplot as plt
   #fig = plt.figure(figsize=(20,20))
-  from bokeh.plotting import figure, show
+  from bokeh.plotting import figure, show, output_file, save
   from bokeh.resources import CDN
-  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 600)
+  output_file(fname, title = "")
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
   G = nx.Graph()
   added = []
   added_word = []
@@ -370,54 +431,62 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   for doc in doc_topics:
     docname = doc
     t = doc_topics[doc]
-    G.add_node(docname)
-    node_docs.append(docname)
+    G.add_node(showWord(docname))
+    node_docs.append(showWord(docname))
     for topic, weight in t:
       if not topic in added:
-        G.add_node(topic)
+        G.add_node(showWord(topic))
         added.append(topic)
-        node_topics.append(topic)
+        node_topics.append(showWord(topic))
         for word, weight_w in topics[topic][1]:
           if not word in added_word:
-            G.add_node(word)
+            G.add_node(showWord(word))
             added_word.append(word)
-            node_words.append(word)
-          G.add_edge(topic, word, weight = 500*weight_w)
-      G.add_edge(docname, topic, weight = 500*weight)
-  pos=nx.spring_layout(G, scale=20) # positions for all nodes
+            node_words.append(showWord(word))
+          G.add_edge(showWord(topic), showWord(word), weight = 100*weight_w)
+      G.add_edge(showWord(docname), showWord(topic), weight = weight)
+  pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
-    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge])
+    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
   for node in G.nodes():
     fc = 'gray'
     if node in node_docs:
-      fc = 'red'
+      fc = 'cyan'
     elif node in node_topics:
       fc = 'green'
     elif node in node_words:
-      fc = 'blue'
-    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.2, fill_color = fc, alpha = 0.8)
-    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [str(node)], text_color = 'black', \
+      fc = 'grey'
+    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
-  #nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='r', alpha=0.8)
-  #nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
-  #nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_docs, node_color='r', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_topics, node_color='g', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_words, node_color='b', alpha=0.8)
   #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
   #nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
   #plt.axis("off")
   #plt.savefig(fname)
   #plt.close(fig)
-  output_plot(fname, title = "")
+  save(fig, fname, title = "")
 
 def save_doc_word_time(docs, topics, fname = ".png"):
-  import matplotlib.pyplot as plt
   import datetime
   from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
   from numpy import arange
+
+  #import matplotlib.pyplot as plt
+  from bokeh.plotting import figure, show, output_file, save
+  from bokeh.resources import CDN
+  from bokeh.io import output_file
+  from bokeh.models import DatetimeTickFormatter
+
   x = [0]*len(docs.keys())
   y = {}
   word_list = []
   date_id = 0
-  for date in docs:
+  dockeys = docs.keys()
+  dockeys.sort()
+  for date in dockeys:
     x[date_id] = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
     for doc in docs[date]:
       docname = doc
@@ -432,27 +501,40 @@ def save_doc_word_time(docs, topics, fname = ".png"):
             y[docname][word] = [0]*len(docs)
           y[docname][word][date_id] = weight*weight_w
     date_id += 1
+  print x
   
   for word in word_list:
-    fig, ax = plt.subplots()
+    #fig, ax = plt.subplots()
+    output_file("pertime_%s%s" % (word, fname), title = "")
+    fig = figure(height = 800, width = 800)
     count = 0
-    ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
-    lc = ['b', 'b', 'b', 'b', 'r', 'r', 'r', 'r']
+    #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
+    lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
     for docname in y:
       if not word in y[docname]: continue
-      plt.plot_date(x, y[docname][word], label=docname, linewidth=2, linestyle = ls[count], color=lc[count])
+      #plt.plot_date(x, y[docname][word], label=docname, linewidth=2, linestyle = ls[count], color=lc[count])
+      fig.line(x, y[docname][word], legend = docname, line_dash = (4,4), line_width = 2, line_color = lc[count])
+      fig.circle(x, y[docname][word], color = lc[count])
       count += 1
-    plt.legend(loc="upper left")
-    plt.xlabel("Date")
-    plt.ylabel("Probability")
-    ax.set_xlim(x[0], x[-1])
+    fig.xaxis.formatter = DatetimeTickFormatter()
+    import math
+    fig.xaxis.major_label_orientation = math.pi/4.0
+    fig.xaxis.axis_label = "Date"
+    fig.yaxis.axis_label = "Probability"
+    fig.legend.location = "top_left"
 
-    ax.xaxis.set_major_locator(DayLocator())
-    ax.xaxis.set_minor_locator(HourLocator(arange(0, 25, 6)))
-    ax.xaxis.set_major_formatter(DateFormatter('%d/%m/%Y'))
-    ax.fmt_xdata = DateFormatter('%d/%m/%Y')
-    fig.autofmt_xdate()
+    #plt.legend(loc="upper left")
+    #plt.xlabel("Date")
+    #plt.ylabel("Probability")
+    #ax.set_xlim(x[0], x[-1])
 
-    ax.grid(True)
-    plt.savefig("pertime_%s%s" % (word, fname))
-    plt.close(fig)
+    #ax.xaxis.set_major_locator(DayLocator())
+    #ax.xaxis.set_minor_locator(HourLocator(arange(0, 25, 6)))
+    #ax.xaxis.set_major_formatter(DateFormatter('%d/%m/%Y'))
+    #ax.fmt_xdata = DateFormatter('%d/%m/%Y')
+    #fig.autofmt_xdate()
+
+    #ax.grid(True)
+    #plt.savefig("pertime_%s%s" % (word, fname))
+    #plt.close(fig)
+    save(fig, "pertime_%s%s" % (word, fname), title = "")
