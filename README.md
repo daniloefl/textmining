@@ -46,5 +46,7 @@ $ sudo python setup.py install
 $ cd ..
 $ sudo rm -rf gensim-1.0.0
 $ sudo apt install wget lynx
+$ sudo apt install python-pip
+$ pip install bokeh
 ```
 
