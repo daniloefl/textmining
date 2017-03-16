@@ -356,8 +356,11 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
 
 def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
-  import matplotlib.pyplot as plt
-  fig = plt.figure(figsize=(20,20))
+  #import matplotlib.pyplot as plt
+  #fig = plt.figure(figsize=(20,20))
+  from bokeh.plotting import figure, show
+  from bokeh.resources import CDN
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 600)
   G = nx.Graph()
   added = []
   added_word = []
@@ -382,14 +385,28 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
           G.add_edge(topic, word, weight = 500*weight_w)
       G.add_edge(docname, topic, weight = 500*weight)
   pos=nx.spring_layout(G, scale=20) # positions for all nodes
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='r', alpha=0.8)
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
-  nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
-  nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
-  nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
-  plt.axis("off")
-  plt.savefig(fname)
-  plt.close(fig)
+  for edge in G.edges():
+    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge])
+  for node in G.nodes():
+    fc = 'gray'
+    if node in node_docs:
+      fc = 'red'
+    elif node in node_topics:
+      fc = 'green'
+    elif node in node_words:
+      fc = 'blue'
+    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.2, fill_color = fc, alpha = 0.8)
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [str(node)], text_color = 'black', \
+             text_font_size = "10px", text_align = "center", text_baseline = "middle")
+  #nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_docs, node_color='r', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_topics, node_color='g', alpha=0.8)
+  #nx.draw_networkx_nodes(G,pos,node_size=3000, nodelist=node_words, node_color='b', alpha=0.8)
+  #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
+  #nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
+  #plt.axis("off")
+  #plt.savefig(fname)
+  #plt.close(fig)
+  output_plot(fname, title = "")
 
 def save_doc_word_time(docs, topics, fname = ".png"):
   import matplotlib.pyplot as plt

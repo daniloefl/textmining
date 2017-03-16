@@ -74,7 +74,7 @@ for did in range(0, len(texts)):
   topic_per_doc[date][d] = ldamodel.get_document_topics(dictionary.doc2bow(texts[did]))
 for date in topic_per_doc:
   utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.png" % date)
-  utils.save_doctopic_full(topic_per_doc[date], ldamodel.show_topics(5, num_words=5, formatted=False), "topic_per_doc_full_%s.png" % date)
+  utils.save_doctopic_full(topic_per_doc[date], ldamodel.show_topics(5, num_words=5, formatted=False), "topic_per_doc_full_%s.html" % date)
   utils.save_doctopic_full_nointermediate(topic_per_doc[date], ldamodel.show_topics(5, num_words=5, formatted=False), "topic_per_doc_full_nointermediate_%s.png" % date)
 
 utils.save_doc_word_time(topic_per_doc, ldamodel.show_topics(5, num_words=5, formatted=False), ".png")
