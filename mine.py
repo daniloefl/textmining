@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 # coding: utf-8
 from nltk.corpus import stopwords
@@ -6,6 +7,8 @@ from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models
 import os
 import utils
+
+ntopics = 20
 
 def main():
   doc_set = []
@@ -34,40 +37,6 @@ def main():
     raw = doc.lower()
     tokens = tokenizer.tokenize(raw)
     lang_stop = set(stopwords.words('portuguese'))
-    lang_stop.add("diz")
-    '''
-    lang_stop.add("folhapress")
-    lang_stop.add("agencia")
-    lang_stop.add("globo")
-    lang_stop.add("foto")
-    lang_stop.add("2017")
-    lang_stop.add("sao")
-    lang_stop.add("veja")
-    lang_stop.add("kim")
-    lang_stop.add("maxson")
-    lang_stop.add("hugh")
-    lang_stop.add("sobr")
-    lang_stop.add("vai")
-    lang_stop.add("passa")
-    lang_stop.add("rs")
-    lang_stop.add("ser")
-    lang_stop.add("morar")
-    lang_stop.add("dia")
-    lang_stop.add("cronologia")
-    lang_stop.add("comissao")
-    lang_stop.add("processo")
-    lang_stop.add(u"especiais")
-    lang_stop.add(u"especial")
-    lang_stop.add(u"especia")
-    lang_stop.add(u"especi")
-    lang_stop.add(u"ano")
-    lang_stop.add(u"anos")
-    lang_stop.add(u"apo")
-    lang_stop.add(u"apos")
-    lang_stop.add(u"apó")
-    lang_stop.add(u"após")
-    lang_stop.add(u"sobr")
-    '''
     stopped_tokens = [i for i in tokens if not i in lang_stop]
   
     # stem token
@@ -78,12 +47,13 @@ def main():
   dictionary = corpora.Dictionary(texts)
   corpus = [dictionary.doc2bow(text) for text in texts]
   
-  #ldamodel = models.ldamodel.LdaModel(corpus, num_topics=10, id2word = dictionary)
-  ldamodel = models.lsimodel.LsiModel(corpus, num_topics=10, id2word = dictionary)
+  #ldamodel = models.ldamodel.LdaModel(corpus, num_topics=ntopics, id2word = dictionary)
+  ldamodel = models.lsimodel.LsiModel(corpus, num_topics=ntopics, id2word = dictionary)
   topics = ldamodel.print_topics()
   for i in range(0, len(topics)):
     print "Topic #%d: %s" %(i, topics[i])
-  utils.save_fulltopic_graph(ldamodel.show_topics(10, formatted=False))
+    utils.save_fulltopic_graph([ ldamodel.show_topics(ntopics, formatted=False)[i] ], [i], "_only_%d.html" % i)
+  utils.save_fulltopic_graph(ldamodel.show_topics(ntopics, formatted=False), range(0, len(topics)))
   
   print "--"
   print "Topics per document:"
@@ -103,10 +73,10 @@ def main():
       topic_per_doc[date][d] = ldamodel[dictionary.doc2bow(texts[did])]
   for date in topic_per_doc:
     utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
-    utils.save_doctopic_full(topic_per_doc[date], ldamodel.show_topics(10, formatted=False), "topic_per_doc_full_%s.html" % date)
-    utils.save_doctopic_full_nointermediate(topic_per_doc[date], ldamodel.show_topics(10, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
+    utils.save_doctopic_full(topic_per_doc[date], ldamodel.show_topics(ntopics, formatted=False), "topic_per_doc_full_%s.html" % date)
+    utils.save_doctopic_full_nointermediate(topic_per_doc[date], ldamodel.show_topics(ntopics, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
   
-  utils.save_doc_word_time(topic_per_doc, ldamodel.show_topics(10, formatted=False), ".html")
+  utils.save_doc_word_time(topic_per_doc, ldamodel.show_topics(ntopics, formatted=False), ".html")
 
 if __name__ == "__main__":
   main()

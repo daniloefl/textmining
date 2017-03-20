@@ -266,15 +266,8 @@ sources = {
           }
 
 
-
-def save_fulltopic_graph(topics, fname = ".png"):
+def save_fulltopic_graph(topics, tnames, fname = ".html"):
   import networkx as nx
-  #import matplotlib
-  #matplotlib.use('Agg')
-  #import matplotlib.pyplot as plt
-  #import matplotlib.gridspec as gridspec
-  #import math
-  #fig = plt.figure(figsize=(10,10))
   import math
   from bokeh.plotting import figure, show, output_file, save
   from bokeh.resources import CDN
@@ -288,14 +281,14 @@ def save_fulltopic_graph(topics, fname = ".png"):
   node_topics = []
   node_words = []
   for t in range(0, len(topics)):
-    G.add_node(showWord(t))
-    node_topics.append(showWord(t))
+    G.add_node(showWord(tnames[t]))
+    node_topics.append(showWord(tnames[t]))
     for word, weight in topics[t][1]:
       if not word in added_word:
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(t), showWord(word), weight = 100*weight, length=weight)
+      G.add_edge(showWord(tnames[t]), showWord(word), weight = 10*weight, length=weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -305,17 +298,9 @@ def save_fulltopic_graph(topics, fname = ".png"):
       fc = 'cyan'
     elif node in node_words:
       fc = 'gray'
-    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
-  #pos=nx.spring_layout(G, weight = 'weight', scale = 1)
-  #nx.draw_networkx_nodes(G, pos, node_size=5000, nodelist=node_topics, node_color='g', alpha=0.8)
-  #nx.draw_networkx_nodes(G, pos, node_size=5000, nodelist=node_words, node_color='b', alpha=0.8)
-  #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
-  #nx.draw_networkx_labels(G,pos, font_size=10,font_family='sans-serif')
-  #plt.axis("off")
-  #plt.savefig("topic_all%s" % (fname))
-  #plt.close(fig)
   save(fig, "topic_all%s" % (fname), title = "")
 
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
@@ -342,7 +327,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
         G.add_node(showWord(word))
         added.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(docname), showWord(word), weight = 100*weight)
+      G.add_edge(showWord(docname), showWord(word), weight = 1*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -352,7 +337,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
       fc = 'cyan'
     elif node in node_words:
       fc = 'gray'
-    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   #pos=nx.spring_layout(G, scale=10) # positions for all nodes
@@ -390,7 +375,7 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
           G.add_node(showWord(word))
           added_word.append(word)
           node_words.append(showWord(word))
-        G.add_edge(showWord(docname), showWord(word), weight = 100*weight_w*weight)
+        G.add_edge(showWord(docname), showWord(word), weight = 1*weight_w*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -400,7 +385,7 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
       fc = 'cyan'
     elif node in node_words:
       fc = 'gray'
-    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_docs, node_color='g', alpha=0.8)
@@ -443,7 +428,7 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
             G.add_node(showWord(word))
             added_word.append(word)
             node_words.append(showWord(word))
-          G.add_edge(showWord(topic), showWord(word), weight = 100*weight_w)
+          G.add_edge(showWord(topic), showWord(word), weight = 1*weight_w)
       G.add_edge(showWord(docname), showWord(topic), weight = weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
@@ -456,7 +441,7 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
       fc = 'green'
     elif node in node_words:
       fc = 'grey'
-    fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist=node_docs, node_color='r', alpha=0.8)
@@ -514,7 +499,7 @@ def save_doc_word_time(docs, topics, fname = ".png"):
       if not word in y[docname]: continue
       #plt.plot_date(x, y[docname][word], label=docname, linewidth=2, linestyle = ls[count], color=lc[count])
       fig.line(x, y[docname][word], legend = docname, line_dash = (4,4), line_width = 2, line_color = lc[count])
-      fig.circle(x, y[docname][word], color = lc[count])
+      #fig.circle(x, y[docname][word], color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
     import math
