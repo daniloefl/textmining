@@ -7,9 +7,10 @@ from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models, similarities
 import os
 import utils
+import datetime
 
 ntopics   = 10       # number of topics to split the imput documents on
-useLDA    = False    # whether to use Latent Dirichlet Allocation or LSI
+useLDA    = True     # whether to use Latent Dirichlet Allocation or LSI
 
 # words to query in documents
 sim_query = ['Impeachment golpe', 'democracia brasil',
@@ -59,7 +60,8 @@ def main():
   p_stemmer = PorterStemmer()
 
   # stop words
-  lang_stop = set(stopwords.words('portuguese')) # get set of stop words for portuguese
+  lang_stop = (stopwords.words('portuguese')) # get set of stop words for portuguese
+  lang_stop.extend(['bbc', 'globo', 'foto', 'agencia', 'photo', '01', '00', 'folha', 'folhapress'])
   
   texts = []
   for doc in doc_set:
@@ -94,10 +96,18 @@ def main():
   else:
     myModel = models.lsimodel.LsiModel(corpus_tfidf, num_topics=ntopics, id2word = dictionary)
 
+  print "<html><head><title>Results of text mining Brazilian newspapers front page</title></head><body><h3>Results of text mining Brazilian newspapers front page</h3>"
+
   # now print the topics that appear often
-  topics = myModel.print_topics()
+  topics = myModel.show_topics(ntopics, formatted=False)
   for i in range(0, len(topics)):
-    print "Topic #%d: %s" %(i, topics[i]) # show it in the screen
+    print "<table>"
+    print "<tr><td colspan=\"2\">Words within topic '%d':</td></tr>" % i
+    print "<tr><td>Contribution</td><td>Word</td></tr>"
+    for v in topics[i][1]:
+      print "<tr><td>%6.4f</td><td>%10s</td></tr>" % (v[1], utils.showWord(v[0]))
+    print "</table>"
+
     # make a graph showing this topic connected to its words, with the length
     # of the edge being the weight of the word in that topic
     utils.save_fulltopic_graph([ myModel.show_topics(ntopics, formatted=False)[i] ], [i], "_only_%d.html" % i)
@@ -109,18 +119,23 @@ def main():
   print "Topics per document:"
   topic_per_doc = {}
   for did in range(0, len(texts)):
+    print "<table>"
+    date = doc_id[did].split('/')[0]
+    dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
+    print "<tr><td colspan=\"2\">Topics within document '%s' of '%s':</td></tr>" % (utils.showWord(doc_id[did].split('/')[-1]), dt.date())
+    print "<tr><td>Relevance</td><td>Topic</td></tr>"
     if useLDA:
-      print "Document %s: %s" % (doc_id[did], myModel.get_document_topics(tfidf[dictionary.doc2bow(texts[did])]))
+      topics = myModel.get_document_topics(tfidf[dictionary.doc2bow(texts[did])])
     else:
-      print "Document %s: %s" % (doc_id[did], myModel[tfidf[dictionary.doc2bow(texts[did])]])
+      topics = myModel[tfidf[dictionary.doc2bow(texts[did])]]
+    for k,v in topics:
+      print "<tr><td>%6.4f</td><td>%d</td></tr>" % (v, k)
+    print "</table>"
     date = doc_id[did].split('/')[0]
     d = doc_id[did].split('/')[-1]
     if not date in topic_per_doc:
       topic_per_doc[date] = {}
-    if useLDA:
-      topic_per_doc[date][d] = myModel.get_document_topics(tfidf[dictionary.doc2bow(texts[did])])
-    else:
-      topic_per_doc[date][d] = myModel[tfidf[dictionary.doc2bow(texts[did])]]
+    topic_per_doc[date][d] = topics
 
   # now make a graph of it
   # connecting the documents to topics
@@ -154,8 +169,16 @@ def main():
       similar[item].append((weight, doc_id[did2]))
 
   for item in sim_query:
-    print "Documents matching '%s':" % item
-    print sorted(similar[item], key=lambda val: -val[0])
+    print "<table>"
+    print "<tr><td colspan=\"3\">Documents matching '%s':</td></tr>" % item
+    print "<tr><td>Similarity (\%)</td><td>Source</td><td>Date</td></tr>"
+    for k,v in sorted(similar[item], key=lambda val: -val[0]):
+      date = v.split('/')[0]
+      dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
+      print "<tr><td>%5.2f</td><td>%20s</td><td>%20s</td></tr>" % (k*100, utils.showWord(v.split('/')[-1]), dt.date())
+    print "</table>"
+
+  print "</body></html>"
 
 if __name__ == "__main__":
   main()

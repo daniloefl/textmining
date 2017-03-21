@@ -284,7 +284,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
   for t in range(0, len(topics)):
     atLeastOne = False
     for word, weight in topics[t][1]:
-      if weight < 0.2: continue
+      if weight < 0: continue
       if not word in added_word:
         G.add_node(showWord(word))
         added_word.append(word)
@@ -304,7 +304,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
     elif node in node_words:
       fc = 'gray'
     #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
-    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [node], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   save(fig, "topic_all%s" % (fname), title = "")
 
@@ -356,7 +356,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
     t = topics[doc]
     atLeastOne = False
     for word, weight in t:
-      if weight < 0.2: continue
+      if weight < 0: continue
       if not word in added:
         G.add_node(showWord(word))
         added.append(word)

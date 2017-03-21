@@ -25,6 +25,8 @@ wordMap = {
 
 def showWord(w):
   if w in wordMap:
-    return wordMap[w]
-  return unicode(w)
+    return wordMap[w].encode('utf-8')
+  if isinstance(w, str):
+    return w.encode('utf-8')
+  return w
 
