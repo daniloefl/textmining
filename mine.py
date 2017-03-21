@@ -114,14 +114,12 @@ def main():
             font-size: 1.2em;
           }
           table, th, td {
-            //border: 1px solid black;
             padding: 0.5em;
             text-align: center;
           }
           th {
-            height: 3em;
-            background-color: #4CAF50;
-            color: white;
+            height: 2em;
+            font-size: 1.4em;
           }
           th, td {
             border-bottom: 1px solid #ddd;
@@ -218,8 +216,8 @@ def main():
 
   for item in sim_query:
     print "<table>"
-    print "<tr><td colspan=\"3\">Documents matching '%s':</td></tr>" % item
-    print "<tr><td>Similarity (%)</td><td>Source</td><td>Date</td></tr>"
+    print "<tr><th colspan=\"3\">Documents matching '%s':</th></tr>" % item
+    print "<tr><th>Similarity (%)</th><th>Source</th><th>Date</th></tr>"
     for k,v in sorted(similar[item], key=lambda val: -val[0]):
       date = v.split('/')[0]
       dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
