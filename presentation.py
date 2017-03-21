@@ -1,6 +1,12 @@
 
 # coding: utf-8
 wordMap = {
+           "fila": u"queue|fila",
+           "criam": u"to create|criar",
+           "enfrentam": u"to confront|enfrentar",
+           "onibu": u"bus|ônibus",
+           "paralisacao": u"strike|paralisação",
+           "samba": u"Samba|samba",
            "habib": u"Habib",
            "depressao": u"depression|depressão",
            "espaci": u"space|espaço",
