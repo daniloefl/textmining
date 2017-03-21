@@ -92,7 +92,7 @@ def main():
   # term-document matrix
   # or LDA for a probabilistic model
   if useLDA:
-    myModel = models.ldamodel.LdaModel(corpus_tfidf, num_topics=ntopics, id2word = dictionary)
+    myModel = models.ldamodel.LdaModel(corpus_tfidf, num_topics=ntopics, id2word = dictionary, random_state=123)
   else:
     myModel = models.lsimodel.LsiModel(corpus_tfidf, num_topics=ntopics, id2word = dictionary)
 
@@ -138,7 +138,7 @@ def main():
   print "<title>Results of text mining Brazilian newspapers front page</title></head><body><h3>Results of text mining Brazilian newspapers front page</h3>"
 
   # now print the topics that appear often
-  topics = myModel.show_topics(ntopics, formatted=False)
+  topics = myModel.show_topics(num_topics=ntopics, formatted=False)
   for i in range(0, len(topics)):
     print "<table>"
     print "<tr><th colspan=\"2\">Words within topic '%d':</th></tr>" % i
