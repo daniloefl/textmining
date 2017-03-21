@@ -266,6 +266,7 @@ sources = {
           }
 
 
+# Save a graph with topics connected to words
 def save_fulltopic_graph(topics, tnames, fname = ".html"):
   import networkx as nx
   import math
@@ -288,7 +289,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(tnames[t]), showWord(word), weight = 10*weight, length=weight)
+      G.add_edge(showWord(tnames[t]), showWord(word), weight=10*weight, length=weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -303,6 +304,38 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   save(fig, "topic_all%s" % (fname), title = "")
 
+# make graph showing similarity between documents
+def save_similarity_graph(similar, fname = ".html"):
+  import networkx as nx
+  import math
+  from bokeh.plotting import figure, show, output_file, save
+  from bokeh.resources import CDN
+  output_file(fname, title = "")
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+
+  G = nx.Graph()
+  added_doc = []
+  k = similar.keys()
+  for i in range(0, len(k)):
+    for j in range(0, len(k)):
+      if not k[i] in added_doc:
+        G.add_node(k[i])
+        added_doc.append(k[i])
+      if not k[j] in added_doc:
+        G.add_node(k[j])
+        added_doc.append(k[j])
+      G.add_edge(k[i], k[j], weight=10*(1+similar[k[i]][k[j]]), length=similar[k[i]][k[j]])
+  pos=nx.spring_layout(G, scale=1) # positions for all nodes
+  #for edge in G.edges():
+  #  fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
+  for node in G.nodes():
+    fc = 'cyan'
+    #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
+    fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
+             text_font_size = "10px", text_align = "center", text_baseline = "middle")
+  save(fig, "similarity%s" % (fname), title = "")
+
+# not used from below here
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   import networkx as nx
   #import matplotlib
@@ -327,7 +360,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
         G.add_node(showWord(word))
         added.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(docname), showWord(word), weight = 1*weight)
+      G.add_edge(showWord(docname), showWord(word), weight = 10*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -375,7 +408,7 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
           G.add_node(showWord(word))
           added_word.append(word)
           node_words.append(showWord(word))
-        G.add_edge(showWord(docname), showWord(word), weight = 1*weight_w*weight)
+        G.add_edge(showWord(docname), showWord(word), weight = 10*weight_w*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -428,8 +461,8 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
             G.add_node(showWord(word))
             added_word.append(word)
             node_words.append(showWord(word))
-          G.add_edge(showWord(topic), showWord(word), weight = 1*weight_w)
-      G.add_edge(showWord(docname), showWord(topic), weight = weight)
+          G.add_edge(showWord(topic), showWord(word), weight = 10*weight_w)
+      G.add_edge(showWord(docname), showWord(topic), weight = 10*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
