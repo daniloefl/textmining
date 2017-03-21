@@ -295,7 +295,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(tnames[t]), showWord(word), weight=100*weight/bigWeight)
+      G.add_edge(showWord(tnames[t]), showWord(word), weight=10*weight/bigWeight)
       atLeastOne = True
     if atLeastOne:
       G.add_node(showWord(tnames[t]))
