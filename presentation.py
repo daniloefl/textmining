@@ -49,6 +49,23 @@ wordMap = {
            "catadora": u"picker|catadora",
            "perderam": u"lost|perderam",
            "camara": u"chamber|camara",
+           "expo": u"expose|expôr",
+           "travesti": u"transvestite|travesti",
+           "dandara": u"Dandara",
+           "achaqu": u"achaque",
+           "sp": u"São Paulo",
+           "evitar": u"avoid|evitar",
+           "uber": u"Uber",
+           "tragedia": u"tragedy|tragédia",
+           "cubatao": u"Cubatão",
+           "siria": u"Siria|Síria",
+           "holanda": u"Neatherlands|Holanda",
+           "viagem": u"travel|viagem",
+           "ana": u"Ana",
+           "facebook": u"Facebook",
+           "divulgacao": u"marketing|divulgação",
+           "ar": u"air|ar",
+           "curriculo": u"curriculum|currículo",
            }
 
 def showWord(w):
