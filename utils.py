@@ -282,6 +282,11 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
   added_word = []
   node_topics = []
   node_words = []
+  bigWeight = 0
+  for t in range(0, len(topics)):
+    for word, weight in topics[t][1]:
+      if weight > bigWeight: bigWeight = weight
+
   for t in range(0, len(topics)):
     atLeastOne = False
     for word, weight in topics[t][1]:
@@ -290,7 +295,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(tnames[t]), showWord(word), weight=20000*weight)
+      G.add_edge(showWord(tnames[t]), showWord(word), weight=100*weight/bigWeight)
       atLeastOne = True
     if atLeastOne:
       G.add_node(showWord(tnames[t]))
@@ -306,7 +311,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
       fc = 'gray'
     #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [node], text_color = 'black', \
-             text_font_size = "12px", text_align = "center", text_baseline = "middle")
+             text_font_size = "14px", text_align = "center", text_baseline = "middle")
   save(fig, "topic_all%s" % (fname), title = "")
   script, div = components(fig)
   return script, div
@@ -382,7 +387,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
       fc = 'gray'
     #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
-             text_font_size = "12px", text_align = "center", text_baseline = "middle")
+             text_font_size = "14px", text_align = "center", text_baseline = "middle")
   save(fig, fname, title = "")
   script, div = components(fig)
   return script, div

@@ -1,6 +1,12 @@
 
 # coding: utf-8
 wordMap = {
+           "habib": u"Habib",
+           "depressao": u"depression|depressão",
+           "espaci": u"space|espaço",
+           "droga": u"drug|droga",
+           "pergunta": u"question|pergunta",
+           "promet": u"promise|prometer",
            "fronteira": u"border|fronteira",
            "mae": u"mother|mãe",
            "veta": u"veto|vetar",
