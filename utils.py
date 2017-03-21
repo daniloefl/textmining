@@ -282,15 +282,18 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
   node_topics = []
   node_words = []
   for t in range(0, len(topics)):
-    G.add_node(showWord(tnames[t]))
-    node_topics.append(showWord(tnames[t]))
+    atLeastOne = False
     for word, weight in topics[t][1]:
-      if weight < 0: continue
+      if weight < 0.2: continue
       if not word in added_word:
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(tnames[t]), showWord(word), weight=10*weight)
+      G.add_edge(showWord(tnames[t]), showWord(word), weight=20*weight)
+      atLeastOne = True
+    if atLeastOne:
+      G.add_node(showWord(tnames[t]))
+      node_topics.append(showWord(tnames[t]))
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -327,7 +330,7 @@ def save_similarity_graph(similar, fname = ".html"):
       if not k2[j] in added_doc:
         G.add_node(k2[j])
         added_doc.append(k2[j])
-      G.add_edge(k1[i], k2[j], weight=10*similar[k1[i]][k2[j]])
+      G.add_edge(k1[i], k2[j], weight=20*similar[k1[i]][k2[j]])
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -351,15 +354,18 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   for doc in topics:
     docname = doc
     t = topics[doc]
-    G.add_node(showWord(docname))
-    node_docs.append(showWord(docname))
+    atLeastOne = False
     for word, weight in t:
-      if weight < 0: continue
+      if weight < 0.2: continue
       if not word in added:
         G.add_node(showWord(word))
         added.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(docname), showWord(word), weight = 10*weight)
+      G.add_edge(showWord(docname), showWord(word), weight = 20*weight)
+      atLeastOne = True
+    if atLeastOne:
+      G.add_node(showWord(docname))
+      node_docs.append(showWord(docname))
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")

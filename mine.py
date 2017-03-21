@@ -8,11 +8,17 @@ from gensim import corpora, models, similarities
 import os
 import utils
 
-ntopics   = 5        # number of topics to split the imput documents on
+ntopics   = 10       # number of topics to split the imput documents on
 useLDA    = False    # whether to use Latent Dirichlet Allocation or LSI
 
 # words to query in documents
-sim_query = ['Impeachment foi golpe', 'Violacoes de direitos humanos', 'Aumento em casos de febre amarela', 'saude']
+sim_query = ['Impeachment golpe', 'democracia brasil',
+             'Violacoes de direitos humanos',
+             'Aumento em casos de febre amarela',
+             'Temer',
+             'Dilma',
+             'inflacao',
+             'saude']
 
 def main():
 
@@ -116,6 +122,17 @@ def main():
     else:
       topic_per_doc[date][d] = myModel[tfidf[dictionary.doc2bow(texts[did])]]
 
+  # now make a graph of it
+  # connecting the documents to topics
+  # this is done for each document in a specific day
+  for date in topic_per_doc:
+    # for all documents in this date
+    utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
+  #  utils.save_doctopic_full(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_%s.html" % date)
+  #  utils.save_doctopic_full_nointermediate(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
+  #
+  #utils.save_doc_word_time(topic_per_doc, ldamodel.show_topics(ntopics, formatted=False), ".html")
+
   # now do a similarity query
   if useLDA:
     corpus_projection = myModel.get_document_topics(corpus_tfidf)
@@ -129,23 +146,16 @@ def main():
   similar = {}
   for item in sim_query:
     similar[item] = []
-    for did2, weight in list(enumerate( index[ myModel[ tfidf[ dictionary.doc2bow([p_stemmer.stem(i) for i in tokenizer.tokenize(item.lower()) if not i in lang_stop]) ] ] ] )):
+    if useLDA:
+      result = myModel.get_document_topics(tfidf[ dictionary.doc2bow([p_stemmer.stem(i) for i in tokenizer.tokenize(item.lower()) if not i in lang_stop]) ])
+    else:
+      result = myModel[ tfidf[ dictionary.doc2bow([p_stemmer.stem(i) for i in tokenizer.tokenize(item.lower()) if not i in lang_stop]) ] ]
+    for did2, weight in list(enumerate( index[ result ] )):
       similar[item].append((weight, doc_id[did2]))
 
   for item in sim_query:
-    print "Documents matching '%s'" % item
+    print "Documents matching '%s':" % item
     print sorted(similar[item], key=lambda val: -val[0])
-
-  # now make a graph of it
-  # connecting the documents to topics
-  # this is done for each document in a specific day
-  for date in topic_per_doc:
-    # for all documents in this date
-    utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
-  #  utils.save_doctopic_full(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_%s.html" % date)
-  #  utils.save_doctopic_full_nointermediate(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
-  #
-  #utils.save_doc_word_time(topic_per_doc, ldamodel.show_topics(ntopics, formatted=False), ".html")
 
 if __name__ == "__main__":
   main()
