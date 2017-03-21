@@ -271,6 +271,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
   import networkx as nx
   import math
   from bokeh.plotting import figure, show, output_file, save
+  from bokeh.embed import components
   from bokeh.resources import CDN
   output_file(fname, title = "")
   fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
@@ -307,12 +308,15 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [node], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   save(fig, "topic_all%s" % (fname), title = "")
+  script, div = components(fig)
+  return script, div
 
 # make graph showing similarity between documents
 def save_similarity_graph(similar, fname = ".html"):
   import networkx as nx
   import math
   from bokeh.plotting import figure, show, output_file, save
+  from bokeh.embed import components
   from bokeh.resources import CDN
   output_file(fname, title = "")
   fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
@@ -344,6 +348,7 @@ def save_similarity_graph(similar, fname = ".html"):
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   import networkx as nx
   from bokeh.plotting import figure, show, output_file, save
+  from bokeh.embed import components
   from bokeh.resources import CDN
   output_file(fname, title = "")
   fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
@@ -379,6 +384,8 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   save(fig, fname, title = "")
+  script, div = components(fig)
+  return script, div
 
 # not used from below here
 def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_graph.png"):

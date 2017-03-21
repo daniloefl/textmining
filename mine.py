@@ -96,7 +96,19 @@ def main():
   else:
     myModel = models.lsimodel.LsiModel(corpus_tfidf, num_topics=ntopics, id2word = dictionary)
 
-  print "<html><head><title>Results of text mining Brazilian newspapers front page</title></head><body><h3>Results of text mining Brazilian newspapers front page</h3>"
+  print "<html><head>"
+  print """
+<link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.0.min.css"
+    rel="stylesheet" type="text/css">
+<link
+    href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.0.min.css"
+    rel="stylesheet" type="text/css">
+
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.0.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.0.min.js"></script>
+"""
+  print "<title>Results of text mining Brazilian newspapers front page</title></head><body><h3>Results of text mining Brazilian newspapers front page</h3>"
 
   # now print the topics that appear often
   topics = myModel.show_topics(ntopics, formatted=False)
@@ -112,7 +124,10 @@ def main():
     # of the edge being the weight of the word in that topic
     utils.save_fulltopic_graph([ myModel.show_topics(ntopics, formatted=False)[i] ], [i], "_only_%d.html" % i)
   # same as before, but put all topics and words in the same graph
-  utils.save_fulltopic_graph(myModel.show_topics(ntopics, formatted=False), range(0, len(topics)))
+  script, div = utils.save_fulltopic_graph(myModel.show_topics(ntopics, formatted=False), range(0, len(topics)))
+  print "<h4>Graph showing words in each topic</h4>"
+  print script
+  print div
 
   # Try now projecting the document in the topics set
   # this tells us how much each topic contributes in a document
@@ -142,7 +157,11 @@ def main():
   # this is done for each document in a specific day
   for date in topic_per_doc:
     # for all documents in this date
-    utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
+    script, div = utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
+    dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
+    print "<h4>Graph showing topics in each document at %s</h4>" % dt.date()
+    print script
+    print div
   #  utils.save_doctopic_full(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_%s.html" % date)
   #  utils.save_doctopic_full_nointermediate(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
   #
