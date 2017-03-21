@@ -285,11 +285,12 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
     G.add_node(showWord(tnames[t]))
     node_topics.append(showWord(tnames[t]))
     for word, weight in topics[t][1]:
+      if weight < 0: continue
       if not word in added_word:
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(tnames[t]), showWord(word), weight=(0.5*(1+weight)))
+      G.add_edge(showWord(tnames[t]), showWord(word), weight=10*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -315,19 +316,21 @@ def save_similarity_graph(similar, fname = ".html"):
 
   G = nx.Graph()
   added_doc = []
-  k = similar.keys()
-  for i in range(0, len(k)):
-    for j in range(0, len(k)):
-      if not k[i] in added_doc:
-        G.add_node(k[i])
-        added_doc.append(k[i])
-      if not k[j] in added_doc:
-        G.add_node(k[j])
-        added_doc.append(k[j])
-      G.add_edge(k[i], k[j], weight=(0.5*(1+similar[k[i]][k[j]])))
+  k1 = similar.keys()
+  for i in range(0, len(k1)):
+    k2 = similar[k1[i]].keys()
+    for j in range(0, len(k2)):
+      if similar[k1[i]][k2[j]] < 0: continue
+      if not k1[i] in added_doc:
+        G.add_node(k1[i])
+        added_doc.append(k1[i])
+      if not k2[j] in added_doc:
+        G.add_node(k2[j])
+        added_doc.append(k2[j])
+      G.add_edge(k1[i], k2[j], weight=10*similar[k1[i]][k2[j]])
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
-  #for edge in G.edges():
-  #  fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
+  for edge in G.edges():
+    fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
   for node in G.nodes():
     fc = 'cyan'
     #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
@@ -351,11 +354,12 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
     G.add_node(showWord(docname))
     node_docs.append(showWord(docname))
     for word, weight in t:
+      if weight < 0: continue
       if not word in added:
         G.add_node(showWord(word))
         added.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(docname), showWord(word), weight = (0.5*(1+weight)))
+      G.add_edge(showWord(docname), showWord(word), weight = 10*weight)
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")

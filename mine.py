@@ -8,8 +8,11 @@ from gensim import corpora, models, similarities
 import os
 import utils
 
-ntopics = 5        # number of topics to split the imput documents on
-useLDA  = False    # whether to use Latent Dirichlet Allocation or LSI
+ntopics   = 5        # number of topics to split the imput documents on
+useLDA    = False    # whether to use Latent Dirichlet Allocation or LSI
+
+# words to query in documents
+sim_query = ['Impeachment foi golpe', 'Violacoes de direitos humanos', 'Aumento em casos de febre amarela', 'saude']
 
 def main():
 
@@ -48,12 +51,14 @@ def main():
   
   # Create p_stemmer of class PorterStemmer
   p_stemmer = PorterStemmer()
+
+  # stop words
+  lang_stop = set(stopwords.words('portuguese')) # get set of stop words for portuguese
   
   texts = []
   for doc in doc_set:
     raw = doc.lower() # to lower case
     tokens = tokenizer.tokenize(raw) # make word tokens and save it in a list
-    lang_stop = set(stopwords.words('portuguese')) # get set of stop words for portuguese
     stopped_tokens = [i for i in tokens if not i in lang_stop] # remove stop words
   
     # stem token
@@ -122,34 +127,15 @@ def main():
   # this compares a new document with what is in the corpus
   # we can compare the documents in the corpus with each other
   similar = {}
-  for did in range(0, len(texts)):
-    similar[doc_id[did]] = {}
-    for did2, weight in list(enumerate(index[topic_per_doc[date][d]])):
-      similar[doc_id[did]][doc_id[did2]] = weight
-  utils.save_similarity_graph(similar)
+  for item in sim_query:
+    similar[item] = []
+    for did2, weight in list(enumerate( index[ myModel[ tfidf[ dictionary.doc2bow([p_stemmer.stem(i) for i in tokenizer.tokenize(item.lower()) if not i in lang_stop]) ] ] ] )):
+      similar[item].append((weight, doc_id[did2]))
 
-  # now try a similarity query for fixed date
-  similar_date = {}
-  for d in date_set: # for every date available
-    texts_d = []
-    did_d = []
-    # for each document in that date
-    for document in date_set[d]:
-      texts_d.append(texts[document])
-      did_d.append(doc_id[document])
-    # train similarity model
-    new_corpus = [dictionary.doc2bow(text) for text in texts_d]
-    new_corpus_tfidf = tfidf[new_corpus] # apply the trained transformation to the corpus
-    index_d = similarities.MatrixSimilarity(myModel[new_corpus_tfidf])
-    similar_date[d] = {}
-    for idx_id in range(0, len(did_d)):
-      doc_name = did_d[idx_id].split('/')[-1]
-      similar_date[d][doc_name] = {}
-      for did2, weight in list(enumerate(index_d[ myModel[tfidf[dictionary.doc2bow(texts_d[idx_id])]] ])):
-        doc_name2 = did_d[did2].split('/')[-1]
-        similar_date[d][doc_name][doc_name2] = weight
-    utils.save_similarity_graph(similar_date[d], "_%s.html" % d)
-     
+  for item in sim_query:
+    print "Documents matching '%s'" % item
+    print sorted(similar[item], key=lambda val: -val[0])
+
   # now make a graph of it
   # connecting the documents to topics
   # this is done for each document in a specific day
