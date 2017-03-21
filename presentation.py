@@ -1,6 +1,9 @@
 
 # coding: utf-8
 wordMap = {
+           "fronteira": u"border|fronteira",
+           "mae": u"mother|mãe",
+           "veta": u"veto|vetar",
            "president": u"president|presidente",
            "dilma": u"Dilma",
            "temer": u"Temer",

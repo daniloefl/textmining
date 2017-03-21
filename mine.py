@@ -9,7 +9,7 @@ import os
 import utils
 import datetime
 
-ntopics   = 4        # number of topics to split the imput documents on
+ntopics   = 5        # number of topics to split the imput documents on
 useLDA    = True     # whether to use Latent Dirichlet Allocation or LSI
 
 # words to query in documents
