@@ -8,7 +8,7 @@ from gensim import corpora, models, similarities
 import os
 import utils
 
-ntopics = 10       # number of topics to split the imput documents on
+ntopics = 5        # number of topics to split the imput documents on
 useLDA  = False    # whether to use Latent Dirichlet Allocation or LSI
 
 def main():
@@ -150,14 +150,12 @@ def main():
         similar_date[d][doc_name][doc_name2] = weight
     utils.save_similarity_graph(similar_date[d], "_%s.html" % d)
      
-  # the following works, but it is too complicated
-  # not easy to see anything
   # now make a graph of it
   # connecting the documents to topics
   # this is done for each document in a specific day
-  #for date in topic_per_doc:
-  #  # for all documents in this date
-  #  utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
+  for date in topic_per_doc:
+    # for all documents in this date
+    utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
   #  utils.save_doctopic_full(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_%s.html" % date)
   #  utils.save_doctopic_full_nointermediate(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
   #

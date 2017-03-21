@@ -260,7 +260,7 @@ class DWSource(Source):
 sources = {
            'oglobo': OGloboSource('http://oglobo.globo.com/'),
            'folha':  FolhaSource('http://www.folha.uol.com.br/'),
-           'carta':  CartaSource('https://www.cartacapital.com.br/'),
+           #'carta':  CartaSource('https://www.cartacapital.com.br/'),
            'bbc':    BBCSource('http://www.bbc.com/portuguese/brasil'),
            'dw':     DWSource('http://www.dw.com/pt-br/not%C3%ADcias/brasil/s-7142'),
           }
@@ -289,7 +289,7 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
         G.add_node(showWord(word))
         added_word.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(tnames[t]), showWord(word), weight=10*weight, length=weight)
+      G.add_edge(showWord(tnames[t]), showWord(word), weight=(0.5*(1+weight)))
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -324,7 +324,7 @@ def save_similarity_graph(similar, fname = ".html"):
       if not k[j] in added_doc:
         G.add_node(k[j])
         added_doc.append(k[j])
-      G.add_edge(k[i], k[j], weight=0.5*(1+similar[k[i]][k[j]]), length=0.5*(1+similar[k[i]][k[j]]))
+      G.add_edge(k[i], k[j], weight=(0.5*(1+similar[k[i]][k[j]])))
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   #for edge in G.edges():
   #  fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -335,13 +335,8 @@ def save_similarity_graph(similar, fname = ".html"):
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
   save(fig, "similarity%s" % (fname), title = "")
 
-# not used from below here
 def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   import networkx as nx
-  #import matplotlib
-  #matplotlib.use('Agg')
-  #import matplotlib.pyplot as plt
-  #fig = plt.figure(figsize=(10,10))
   from bokeh.plotting import figure, show, output_file, save
   from bokeh.resources import CDN
   output_file(fname, title = "")
@@ -360,7 +355,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
         G.add_node(showWord(word))
         added.append(word)
         node_words.append(showWord(word))
-      G.add_edge(showWord(docname), showWord(word), weight = 10*weight)
+      G.add_edge(showWord(docname), showWord(word), weight = (0.5*(1+weight)))
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   for edge in G.edges():
     fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
@@ -373,16 +368,9 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
     #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "10px", text_align = "center", text_baseline = "middle")
-  #pos=nx.spring_layout(G, scale=10) # positions for all nodes
-  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist = node_docs, node_color='g', alpha=0.8)
-  #nx.draw_networkx_nodes(G,pos,node_size=5000, nodelist = node_words, node_color='b', alpha=0.8)
-  #nx.draw_networkx_edges(G, pos, width=2, edge_color='r', alpha=0.5)
-  #nx.draw_networkx_labels(G,pos,font_size=11,font_family='sans-serif')
-  #plt.axis("off")
-  #plt.savefig(fname)
-  #plt.close(fig)
   save(fig, fname, title = "")
 
+# not used from below here
 def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_graph.png"):
   import networkx as nx
   #import matplotlib
