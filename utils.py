@@ -324,7 +324,7 @@ def save_similarity_graph(similar, fname = ".html"):
       if not k[j] in added_doc:
         G.add_node(k[j])
         added_doc.append(k[j])
-      G.add_edge(k[i], k[j], weight=10*(1+similar[k[i]][k[j]]), length=similar[k[i]][k[j]])
+      G.add_edge(k[i], k[j], weight=0.5*(1+similar[k[i]][k[j]]), length=0.5*(1+similar[k[i]][k[j]]))
   pos=nx.spring_layout(G, scale=1) # positions for all nodes
   #for edge in G.edges():
   #  fig.line(x = [pos[pt][0] for pt in edge],  y = [pos[pt][1] for pt in edge], line_width = 2, line_alpha = 0.5, line_color = "red")
