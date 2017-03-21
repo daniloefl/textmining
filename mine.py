@@ -9,7 +9,7 @@ import os
 import utils
 import datetime
 
-ntopics   = 10       # number of topics to split the imput documents on
+ntopics   = 5        # number of topics to split the imput documents on
 useLDA    = True     # whether to use Latent Dirichlet Allocation or LSI
 
 # words to query in documents
@@ -96,17 +96,46 @@ def main():
   else:
     myModel = models.lsimodel.LsiModel(corpus_tfidf, num_topics=ntopics, id2word = dictionary)
 
-  print "<html><head>"
+  print "<!DOCTYPE html>"
+  print "<html lang=\"en\"><head>"
   print """
-<link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.0.min.css"
-    rel="stylesheet" type="text/css">
-<link
-    href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.0.min.css"
-    rel="stylesheet" type="text/css">
-
-<script src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.0.min.js"></script>
-<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-0.12.0.min.js"></script>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.css" type="text/css" />
+        
+<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.4.min.js"></script>
+<script type="text/javascript">
+    Bokeh.set_log_level("info");
+</script>
+        <style>
+          body {
+            margin: auto;
+            text-align: left;
+            text-weight: bold;
+            font-size: 1.2em;
+          }
+          table, th, td {
+            //border: 1px solid black;
+            padding: 0.5em;
+            text-align: center;
+          }
+          th {
+            height: 3em;
+            background-color: #4CAF50;
+            color: white;
+          }
+          th, td {
+            border-bottom: 1px solid #ddd;
+          }
+          tr:hover {
+            background-color: #f5f5f5;
+          }
+          table {
+            padding-right: 1em;
+            padding-left: 1em;
+            border-collapse: collapse;
+            width: 100%;
+          }
+        </style>
 """
   print "<title>Results of text mining Brazilian newspapers front page</title></head><body><h3>Results of text mining Brazilian newspapers front page</h3>"
 
@@ -114,8 +143,8 @@ def main():
   topics = myModel.show_topics(ntopics, formatted=False)
   for i in range(0, len(topics)):
     print "<table>"
-    print "<tr><td colspan=\"2\">Words within topic '%d':</td></tr>" % i
-    print "<tr><td>Contribution</td><td>Word</td></tr>"
+    print "<tr><th colspan=\"2\">Words within topic '%d':</th></tr>" % i
+    print "<tr><th>Contribution</th><th>Word</th></tr>"
     for v in topics[i][1]:
       print "<tr><td>%6.4f</td><td>%10s</td></tr>" % (v[1], utils.showWord(v[0]))
     print "</table>"
@@ -137,8 +166,8 @@ def main():
     print "<table>"
     date = doc_id[did].split('/')[0]
     dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
-    print "<tr><td colspan=\"2\">Topics within document '%s' of '%s':</td></tr>" % (utils.showWord(doc_id[did].split('/')[-1]), dt.date())
-    print "<tr><td>Relevance</td><td>Topic</td></tr>"
+    print "<tr><th colspan=\"2\">Topics within document '%s' of '%s':</th></tr>" % (utils.showWord(doc_id[did].split('/')[-1]), dt.date())
+    print "<tr><th>Relevance</th><th>Topic</th></tr>"
     if useLDA:
       topics = myModel.get_document_topics(tfidf[dictionary.doc2bow(texts[did])])
     else:
@@ -190,7 +219,7 @@ def main():
   for item in sim_query:
     print "<table>"
     print "<tr><td colspan=\"3\">Documents matching '%s':</td></tr>" % item
-    print "<tr><td>Similarity (\%)</td><td>Source</td><td>Date</td></tr>"
+    print "<tr><td>Similarity (%)</td><td>Source</td><td>Date</td></tr>"
     for k,v in sorted(similar[item], key=lambda val: -val[0]):
       date = v.split('/')[0]
       dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
