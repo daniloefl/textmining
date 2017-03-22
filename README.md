@@ -1,24 +1,20 @@
 # textmining
 
-This generates graphs showing how strongly related different documents
-are connected. This is done per day, so that one can know how this changes
-daily.
+This downloads the front page of different Brazilian newspapers,
+cleans them up, removing advertising and navigation bars, and
+performs a topical text analysis using LDA or LSI.
 
-It is configured to download five different news paper first pages:
-O Globo, Folha da São Paulo, Deutsche Welle, Carta Capital and BBC.
-BBC and Deutsche Welle are downloaded in their Brazilian versins.
+This generates graphs showing how strongly related different documents
+are connected.
+
+It is configured to download four different news paper first pages:
+O Globo, Folha da São Paulo, Deutsche Welle and BBC.
+BBC and Deutsche Welle are downloaded in their Brazilian versions.
 
 To run it, one must download each day their front page news using:
 
 ```
 python get_data.py
-```
-
-One can then clean up the documents, removing publicity and authorship
-information:
-
-```
-python clean_data.py
 ```
 
 The actual Lattent Dirichlet Allocation analysis is done with:
@@ -27,8 +23,9 @@ The actual Lattent Dirichlet Allocation analysis is done with:
 python mine.py
 ```
 
-
-This also  
+It produces an output HTML content that can be saved in a file and seen in a browser.
+Take a look at some results in:
+<https://daniloefl.github.io/textmining/results.html>
 
 # Dependencies installation
 
