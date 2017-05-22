@@ -9,17 +9,30 @@ import os
 import utils
 import datetime
 
-ntopics   = 4        # number of topics to split the imput documents on
+nwords    = 20       # number of words to show per topic
+ntopics   = 10       # number of topics to split the imput documents on
 useLDA    = True     # whether to use Latent Dirichlet Allocation or LSI
 
 # words to query in documents
-sim_query = ['Impeachment golpe', 'democracia brasil',
+sim_query = [
+             'Impeachment golpe',
+             'democracia brasil',
              'Violacoes de direitos humanos',
              'Aumento em casos de febre amarela',
              'Temer',
              'Dilma',
+             'Lula',
+             'Aecio',
+             'gravacao',
+             'triplex',
+             'ciclovia',
              'inflacao',
-             'saude']
+             'saude',
+             'greve',
+             'direitos trabalhistas',
+             'vazamento',
+             'delacao',
+            ]
 
 def main():
 
@@ -61,7 +74,7 @@ def main():
 
   # stop words
   lang_stop = (stopwords.words('portuguese')) # get set of stop words for portuguese
-  lang_stop.extend(['bbc', 'globo', 'foto', 'agencia', 'photo', '01', '00', 'folha', 'folhapress'])
+  lang_stop.extend(['08', 'achaque', 'lico', 'r', '1', 'pra', 'bbc', 'globo', 'foto', 'agencia', 'photo', '01', '00', 'folha', 'folhapress'])
   
   texts = []
   for doc in doc_set:
@@ -138,7 +151,7 @@ def main():
   print "<title>Results of text mining Brazilian newspapers front page</title></head><body><h3>Results of text mining Brazilian newspapers front page</h3>"
 
   # now print the topics that appear often
-  topics = myModel.show_topics(num_topics=ntopics, formatted=False)
+  topics = myModel.show_topics(num_topics=ntopics, num_words=nwords, formatted=False)
   for i in range(0, len(topics)):
     print "<table>"
     print "<tr><th colspan=\"2\">Words within topic '%d':</th></tr>" % i
@@ -149,9 +162,9 @@ def main():
 
     # make a graph showing this topic connected to its words, with the length
     # of the edge being the weight of the word in that topic
-    utils.save_fulltopic_graph([ myModel.show_topics(ntopics, formatted=False)[i] ], [i], "_only_%d.html" % i)
+    utils.save_fulltopic_graph([ myModel.show_topics(ntopics, num_words=nwords, formatted=False)[i] ], [i], "_only_%d.html" % i)
   # same as before, but put all topics and words in the same graph
-  script, div = utils.save_fulltopic_graph(myModel.show_topics(ntopics, formatted=False), range(0, len(topics)))
+  script, div = utils.save_fulltopic_graph(myModel.show_topics(ntopics, num_words =nwords, formatted=False), range(0, len(topics)))
   print "<h4>Graph showing words in each topic</h4>"
   print script
   print div
