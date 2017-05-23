@@ -195,17 +195,13 @@ def main():
   # now make a graph of it
   # connecting the documents to topics
   # this is done for each document in a specific day
-  for date in topic_per_doc:
-    # for all documents in this date
-    script, div = utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
-    dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
-    print "<h4>Graph showing topics in each document at %s</h4>" % dt.date()
-    print script
-    print div
-  #  utils.save_doctopic_full(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_%s.html" % date)
-  #  utils.save_doctopic_full_nointermediate(topic_per_doc[date], myModel.show_topics(ntopics, formatted=False), "topic_per_doc_full_nointermediate_%s.html" % date)
-  #
-  #utils.save_doc_word_time(topic_per_doc, ldamodel.show_topics(ntopics, formatted=False), ".html")
+  #for date in topic_per_doc:
+  #  # for all documents in this date
+  #  script, div = utils.save_doctopic_graph(topic_per_doc[date], "topic_per_doc_%s.html" % date)
+  #  dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
+  #  print "<h4>Graph showing topics in each document at %s</h4>" % dt.date()
+  #  print script
+  #  print div
 
   # now do a similarity query
   if useLDA:
@@ -238,6 +234,8 @@ def main():
     print "</table>"
 
   print "</body></html>"
+  utils.save_query_time(similar, ".html")
+  
 
 if __name__ == "__main__":
   main()

@@ -566,3 +566,52 @@ def save_doc_word_time(docs, topics, fname = ".png"):
     #plt.savefig("pertime_%s%s" % (word, fname))
     #plt.close(fig)
     save(fig, "pertime_%s%s" % (word, fname), title = "")
+
+def save_query_time(similar, fname = ".html"):
+  import datetime
+  from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
+  from numpy import arange
+
+  #import matplotlib.pyplot as plt
+  from bokeh.plotting import figure, show, output_file, save
+  from bokeh.resources import CDN
+  from bokeh.io import output_file
+  from bokeh.models import DatetimeTickFormatter
+
+  for item in similar:
+    word = item
+    word2 = word.replace(" ", "-")
+
+    #fig, ax = plt.subplots()
+    output_file("query_%s%s" % (word2, fname), title = "")
+    fig = figure(height = 800, width = 800)
+    count = 0
+    #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
+    lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
+
+    x = {}
+    y = {}
+    for v in sorted(similar[item], key=lambda val: val[1].split('/')[0]):
+      date = v[1].split('/')[0]
+      dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
+      doc = showWord(v[1].split('/')[-1])
+      if not doc in x:
+        x[doc] = []
+      if not doc in y:
+        y[doc] = []
+      x[doc].append(dt)
+      y[doc].append(v[0]*100.0)
+
+    for doc in x:
+      fig.line(x[doc], y[doc], legend = doc, line_dash = (4,4), line_width = 2, line_color = lc[count])
+      #fig.circle(x[doc], y[doc], color = lc[count])
+      count += 1
+    fig.xaxis.formatter = DatetimeTickFormatter()
+    import math
+    fig.xaxis.major_label_orientation = math.pi/4.0
+    fig.xaxis.axis_label = "Date"
+    fig.yaxis.axis_label = "Match probability [%]"
+    fig.legend.location = "top_left"
+
+    save(fig, "query_%s%s" % (word2, fname), title = "")
+
