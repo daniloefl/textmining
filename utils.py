@@ -584,7 +584,7 @@ def save_query_time(similar, fname = ".html"):
 
     #fig, ax = plt.subplots()
     output_file("query_%s%s" % (word2, fname), title = "")
-    fig = figure(height = 400, width = 400)
+    fig = figure(height = 400, width = 600)
     count = 0
     #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
     lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
