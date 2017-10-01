@@ -623,6 +623,13 @@ def save_query_time(similar, fname = ".html"):
 
     save(fig, "query_%s%s" % (word2, fname), title = "")
 
+
+def moving_average(a, n = 3):
+   ret = np.cumsum(a)
+   ret[n:] = ret[n:] - ret[:-n]
+   return ret[n - 1:] / n
+
+
 def save_query_time_conditional(similar, fname = ".html", binsize = 1):
   import datetime
   from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
@@ -638,10 +645,6 @@ def save_query_time_conditional(similar, fname = ".html", binsize = 1):
     word = item
     word2 = word.replace(" ", "-")
 
-    #fig, ax = plt.subplots()
-    output_file("query_conditional_%s%s" % (word2, fname), title = "")
-    fig = figure()
-    count = 0
     #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
     lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
 
@@ -670,18 +673,43 @@ def save_query_time_conditional(similar, fname = ".html", binsize = 1):
       avg.append(yMean)
       std.append(yStd)
 
+    y_smooth = {}
+    avg_smooth = moving_average(avg)
+    std_smooth = moving_average(std)
+    for doc in x:
+      y_smooth[doc] = moving_average(y[doc])
+
+    import math
+
+    #fig, ax = plt.subplots()
+    output_file("query_conditional_%s%s" % (word2, fname), title = "")
+    fig = figure()
+    count = 0
     for doc in x:
       fig.line(x[doc], y[doc], legend = doc, line_width = 2, line_color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
-    import math
     fig.xaxis.major_label_orientation = math.pi/4.0
     fig.xaxis.axis_label = "Date"
-    fig.yaxis.axis_label = r"Match probability deviation from mean [$\sigma$]"
+    fig.yaxis.axis_label = u"Match probability deviation from mean [\u03c3]"
     fig.legend.location = "top_left"
     fig.sizing_mode = "scale_width"
-
     save(fig, "query_conditional_%s%s" % (word2, fname), title = "")
+
+    #fig, ax = plt.subplots()
+    output_file("query_conditional_smooth_%s%s" % (word2, fname), title = "")
+    fig = figure()
+    count = 0
+    for doc in x:
+      fig.line(x[doc][1:-1], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
+      count += 1
+    fig.xaxis.formatter = DatetimeTickFormatter()
+    fig.xaxis.major_label_orientation = math.pi/4.0
+    fig.xaxis.axis_label = "Date"
+    fig.yaxis.axis_label = u"Match probability deviation from mean [\u03c3]"
+    fig.legend.location = "top_left"
+    fig.sizing_mode = "scale_width"
+    save(fig, "query_conditional_smooth_%s%s" % (word2, fname), title = "")
 
     output_file("query_avg_%s%s" % (word2, fname), title = "")
     fig = figure()
@@ -694,4 +722,16 @@ def save_query_time_conditional(similar, fname = ".html", binsize = 1):
     fig.legend.location = "top_left"
     fig.sizing_mode = "scale_width"
     save(fig, "query_avg_%s%s" % (word2, fname), title = "")
+
+    output_file("query_avg_smooth_%s%s" % (word2, fname), title = "")
+    fig = figure()
+    fig.line(x[anyDoc][1:-1], avg_smooth, legend = "Average", line_width = 2, line_color = 'blue')
+    fig.line(x[anyDoc][1:-1], std_smooth, legend = "Std. dev.", line_width = 1, line_color = 'red')
+    fig.xaxis.formatter = DatetimeTickFormatter()
+    fig.xaxis.major_label_orientation = math.pi/4.0
+    fig.xaxis.axis_label = "Date"
+    fig.yaxis.axis_label = r"Match probability [%]"
+    fig.legend.location = "top_left"
+    fig.sizing_mode = "scale_width"
+    save(fig, "query_avg_smooth_%s%s" % (word2, fname), title = "")
 
