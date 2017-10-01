@@ -8,6 +8,7 @@ from gensim import corpora, models, similarities
 import os
 import utils
 import datetime
+import numpy as np
 
 nwords    = 20       # number of words to show per topic
 ntopics   = 10       # number of topics to split the imput documents on
@@ -235,6 +236,7 @@ def main():
 
   print "</body></html>"
   utils.save_query_time(similar, ".html")
+  utils.save_query_time_conditional(similar, ".html")
   
 
 if __name__ == "__main__":
