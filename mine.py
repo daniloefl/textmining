@@ -49,7 +49,7 @@ def main():
 
   doc_set = []
   doc_id = []
-  binsize = 4 # days
+  binsize = 2 # days
   for s in utils.sources:
     source = utils.sources[s]
     doc = ""
