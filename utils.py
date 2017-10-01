@@ -274,7 +274,8 @@ def save_fulltopic_graph(topics, tnames, fname = ".html"):
   from bokeh.embed import components
   from bokeh.resources import CDN
   output_file(fname, title = "")
-  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1))
+  fig.sizing_mode = "scale_width"
 
   G = nx.Graph()
   pos_fixed = {}
@@ -324,7 +325,8 @@ def save_similarity_graph(similar, fname = ".html"):
   from bokeh.embed import components
   from bokeh.resources import CDN
   output_file(fname, title = "")
-  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1))
+  fig.sizing_mode = "scale_width"
 
   G = nx.Graph()
   added_doc = []
@@ -356,7 +358,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
   from bokeh.embed import components
   from bokeh.resources import CDN
   output_file(fname, title = "")
-  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1))
   G = nx.Graph()
   added = []
   node_docs = []
@@ -388,6 +390,7 @@ def save_doctopic_graph(topics, fname = "doctopic_graph.png"):
     #fig.circle(x = [pos[node][0]],  y = [pos[node][1]], radius = 0.08, fill_color = fc, alpha = 0.8)
     fig.text(x = [pos[node][0]],  y = [pos[node][1]], text = [unicode(node)], text_color = 'black', \
              text_font_size = "14px", text_align = "center", text_baseline = "middle")
+  fig.sizing_mode = "scale_width"
   save(fig, fname, title = "")
   script, div = components(fig)
   return script, div
@@ -402,7 +405,7 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
   from bokeh.plotting import figure, show, output_file, save
   from bokeh.resources import CDN
   output_file(fname, title = "")
-  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1))
   G = nx.Graph()
   added_word = []
   node_docs = []
@@ -438,6 +441,7 @@ def save_doctopic_full_nointermediate(doc_topics, topics, fname = "doctopic_grap
   #plt.axis("off")
   #plt.savefig(fname)
   #plt.close(fig)
+  fig.sizing_mode = "scale_width"
   save(fig, fname, title = "")
 
 def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
@@ -449,7 +453,7 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   from bokeh.plotting import figure, show, output_file, save
   from bokeh.resources import CDN
   output_file(fname, title = "")
-  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1), height = 800, width = 800)
+  fig = figure(x_range = (-.1,1.1), y_range = (-.1,1.1))
   G = nx.Graph()
   added = []
   added_word = []
@@ -495,6 +499,7 @@ def save_doctopic_full(doc_topics, topics, fname = "doctopic_graph.png"):
   #plt.axis("off")
   #plt.savefig(fname)
   #plt.close(fig)
+  fig.sizing_mode = "scale_width"
   save(fig, fname, title = "")
 
 def save_doc_word_time(docs, topics, fname = ".png"):
@@ -534,7 +539,7 @@ def save_doc_word_time(docs, topics, fname = ".png"):
   for word in word_list:
     #fig, ax = plt.subplots()
     output_file("pertime_%s%s" % (word, fname), title = "")
-    fig = figure(height = 800, width = 800)
+    fig = figure()
     count = 0
     #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
     lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
@@ -550,6 +555,7 @@ def save_doc_word_time(docs, topics, fname = ".png"):
     fig.xaxis.axis_label = "Date"
     fig.yaxis.axis_label = "Probability"
     fig.legend.location = "top_left"
+    fig.sizing_mode = "scale_width"
 
     #plt.legend(loc="upper left")
     #plt.xlabel("Date")
@@ -584,7 +590,7 @@ def save_query_time(similar, fname = ".html"):
 
     #fig, ax = plt.subplots()
     output_file("query_%s%s" % (word2, fname), title = "")
-    fig = figure(height = 400, width = 600)
+    fig = figure()
     count = 0
     #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
     lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
@@ -612,6 +618,7 @@ def save_query_time(similar, fname = ".html"):
     fig.xaxis.axis_label = "Date"
     fig.yaxis.axis_label = "Match probability [%]"
     fig.legend.location = "top_left"
+    fig.sizing_mode = "scale_width"
 
     save(fig, "query_%s%s" % (word2, fname), title = "")
 
