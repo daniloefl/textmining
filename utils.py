@@ -636,7 +636,7 @@ def save_query_time(similar, fname = ".html", smooth = 5):
     fig = figure()
     count = 0
     for doc in x:
-      fig.line(x[doc][:-smooth], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
+      fig.line(x[doc][smooth-1:], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
     fig.xaxis.major_label_orientation = math.pi/4.0
@@ -718,7 +718,7 @@ def save_query_time_conditional(similar, fname = ".html", smooth = 5):
     fig = figure()
     count = 0
     for doc in x:
-      fig.line(x[doc][:-smooth], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
+      fig.line(x[doc][smooth-1:], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
     fig.xaxis.major_label_orientation = math.pi/4.0
@@ -742,8 +742,8 @@ def save_query_time_conditional(similar, fname = ".html", smooth = 5):
 
     output_file("query_avg_smooth_%s%s" % (word2, fname), title = "")
     fig = figure()
-    fig.line(x[anyDoc][:-smooth], avg_smooth, legend = "Average", line_width = 2, line_color = 'blue')
-    fig.line(x[anyDoc][:-smooth], std_smooth, legend = "Std. dev.", line_width = 1, line_color = 'red')
+    fig.line(x[anyDoc][smooth-1:], avg_smooth, legend = "Average", line_width = 2, line_color = 'blue')
+    fig.line(x[anyDoc][smooth-1:], std_smooth, legend = "Std. dev.", line_width = 1, line_color = 'red')
     fig.xaxis.formatter = DatetimeTickFormatter()
     fig.xaxis.major_label_orientation = math.pi/4.0
     fig.xaxis.axis_label = "Date"
