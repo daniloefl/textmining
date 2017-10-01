@@ -44,24 +44,27 @@ def main():
   # the document is stored in data/[date]/[source tag]/frond_clean.txt
   # the document's clean text is in doc_set and its date and source are kept with
   # the same index in doc_id
-  doc_set = []
-  doc_id = []
-  date_set = {}
   dirlist = os.listdir('data/')
   dirlist.sort()
-  for day in dirlist:
-    for s in utils.sources:
-      source = utils.sources[s]
+
+  doc_set = []
+  doc_id = []
+  binsize = 4 # days
+  for s in utils.sources:
+    source = utils.sources[s]
+    doc = ""
+    rebin_count = 0
+    for day in dirlist:
       output = 'data/%s/%s' % (day, s)
       os.system('lynx -dump -nolist %s/front.html > %s/front.txt' % (output, output))
       source.clean('%s/front.txt' %output, '%s/front_clean.txt' % output)
       f = open("%s/front_clean.txt" % output)
-      doc = ""
       for i in f.readlines(): doc += i
-      doc_set.append(doc)
-      doc_id.append('%s/%s' % (day, s))
-      if not day in date_set: date_set[day] = []
-      date_set[day].append(len(doc_id)-1)
+      rebin_count += 1
+      if rebin_count % binsize == 0:
+        doc_set.append(doc)
+        doc_id.append('%s/%s' % (day, s))
+        doc = ""
 
   # now we need to split it into words
   # and remove the word ending, so that only the stem of the word remains
@@ -86,7 +89,7 @@ def main():
     # stem token
     text = [p_stemmer.stem(i) for i in stopped_tokens]
     texts.append(text) # texts keeps a list of list of words (same indexing as doc_set and doc_id)
-  
+
   # now make a dictionary of words found
   # this assigns a unique integer to each word
   dictionary = corpora.Dictionary(texts)
@@ -101,7 +104,7 @@ def main():
   # this avoids the appearance of wors such as "say", which often appears in newspapers
   tfidf = models.TfidfModel(corpus, normalize = True)
   corpus_tfidf = tfidf[corpus] # apply the trained transformation to the corpus
-  
+
   # now make the model, which can be LSI for an SVD transformation of the 
   # term-document matrix
   # or LDA for a probabilistic model

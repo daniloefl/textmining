@@ -623,7 +623,7 @@ def save_query_time(similar, fname = ".html"):
 
     save(fig, "query_%s%s" % (word2, fname), title = "")
 
-def save_query_time_conditional(similar, fname = ".html"):
+def save_query_time_conditional(similar, fname = ".html", binsize = 1):
   import datetime
   from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
   from numpy import arange
@@ -660,22 +660,38 @@ def save_query_time_conditional(similar, fname = ".html"):
       x[doc].append(dt)
       y[doc].append(v[0]*100.0)
 
+    avg = []
+    std = []
     for i in range(0, len(x[anyDoc])):
       yMean = np.mean([y[k][i] for k in x])
+      yStd = np.std([y[k][i] for k in x])
       for doc in x:
-        y[doc][i] = (y[doc][i] - yMean)
+        y[doc][i] = ((y[doc][i] - yMean)/yStd)
+      avg.append(yMean)
+      std.append(yStd)
 
     for doc in x:
-      fig.line(x[doc], y[doc], legend = doc, line_dash = (4,4), line_width = 2, line_color = lc[count])
-      #fig.circle(x[doc], y[doc], color = lc[count])
+      fig.line(x[doc], y[doc], legend = doc, line_width = 2, line_color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
     import math
     fig.xaxis.major_label_orientation = math.pi/4.0
     fig.xaxis.axis_label = "Date"
-    fig.yaxis.axis_label = "Match probability - mean prob. at date [%]"
+    fig.yaxis.axis_label = r"Match probability deviation from mean [$\sigma$]"
     fig.legend.location = "top_left"
     fig.sizing_mode = "scale_width"
 
     save(fig, "query_conditional_%s%s" % (word2, fname), title = "")
+
+    output_file("query_avg_%s%s" % (word2, fname), title = "")
+    fig = figure()
+    fig.line(x[anyDoc], avg, legend = "Average", line_width = 2, line_color = 'blue')
+    fig.line(x[anyDoc], std, legend = "Std. dev.", line_width = 1, line_color = 'red')
+    fig.xaxis.formatter = DatetimeTickFormatter()
+    fig.xaxis.major_label_orientation = math.pi/4.0
+    fig.xaxis.axis_label = "Date"
+    fig.yaxis.axis_label = r"Match probability [%]"
+    fig.legend.location = "top_left"
+    fig.sizing_mode = "scale_width"
+    save(fig, "query_avg_%s%s" % (word2, fname), title = "")
 
