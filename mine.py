@@ -33,6 +33,11 @@ sim_query = [
              'direitos trabalhistas',
              'vazamento',
              'delacao',
+             'violencia',
+             'petista',
+             'corrupcao',
+             'favela',
+             'tucano',
             ]
 
 def main():
