@@ -574,7 +574,13 @@ def save_doc_word_time(docs, topics, fname = ".png"):
     #plt.close(fig)
     save(fig, "pertime_%s%s" % (word, fname), title = "")
 
-def save_query_time(similar, fname = ".html"):
+
+def moving_average(a, n = 5):
+   ret = np.cumsum(a)
+   ret[n:] = ret[n:] - ret[:-n]
+   return ret[n - 1:] / n
+
+def save_query_time(similar, fname = ".html", smooth = 5):
   import datetime
   from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
   from numpy import arange
@@ -589,15 +595,9 @@ def save_query_time(similar, fname = ".html"):
     word = item
     word2 = word.replace(" ", "-")
 
-    #fig, ax = plt.subplots()
-    output_file("query_%s%s" % (word2, fname), title = "")
-    fig = figure()
-    count = 0
-    #ls = ['-', '--', '-.', ':', '-', '--', '-.', ':']
-    lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
-
     x = {}
     y = {}
+    y_smooth = {}
     for v in sorted(similar[item], key=lambda val: val[1].split('/')[0]):
       date = v[1].split('/')[0]
       dt = datetime.datetime(int(date[0:4]), int(date[4:6]), int(date[6:8]))
@@ -609,28 +609,45 @@ def save_query_time(similar, fname = ".html"):
       x[doc].append(dt)
       y[doc].append(v[0]*100.0)
 
+    y_smooth = {}
     for doc in x:
-      fig.line(x[doc], y[doc], legend = doc, line_dash = (4,4), line_width = 2, line_color = lc[count])
-      #fig.circle(x[doc], y[doc], color = lc[count])
+      y_smooth[doc] = moving_average(y[doc], smooth)
+
+    lc = ['blue', 'red', 'green', 'cyan', 'orange', 'magenta', 'pink', 'violet']
+    import math
+
+    #fig, ax = plt.subplots()
+    output_file("query_%s%s" % (word2, fname), title = "")
+    fig = figure()
+    count = 0
+    for doc in x:
+      fig.line(x[doc], y[doc], legend = doc, line_width = 2, line_color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
-    import math
     fig.xaxis.major_label_orientation = math.pi/4.0
     fig.xaxis.axis_label = "Date"
     fig.yaxis.axis_label = "Match probability [%]"
     fig.legend.location = "top_left"
     fig.sizing_mode = "scale_width"
-
     save(fig, "query_%s%s" % (word2, fname), title = "")
 
+    #fig, ax = plt.subplots()
+    output_file("query_smooth_%s%s" % (word2, fname), title = "")
+    fig = figure()
+    count = 0
+    for doc in x:
+      fig.line(x[doc][:-smooth], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
+      count += 1
+    fig.xaxis.formatter = DatetimeTickFormatter()
+    fig.xaxis.major_label_orientation = math.pi/4.0
+    fig.xaxis.axis_label = "Date"
+    fig.yaxis.axis_label = "Match probability [%]"
+    fig.legend.location = "top_left"
+    fig.sizing_mode = "scale_width"
+    save(fig, "query_smooth_%s%s" % (word2, fname), title = "")
 
-def moving_average(a, n = 3):
-   ret = np.cumsum(a)
-   ret[n:] = ret[n:] - ret[:-n]
-   return ret[n - 1:] / n
 
-
-def save_query_time_conditional(similar, fname = ".html", binsize = 1):
+def save_query_time_conditional(similar, fname = ".html", smooth = 5):
   import datetime
   from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
   from numpy import arange
@@ -674,10 +691,10 @@ def save_query_time_conditional(similar, fname = ".html", binsize = 1):
       std.append(yStd)
 
     y_smooth = {}
-    avg_smooth = moving_average(avg)
-    std_smooth = moving_average(std)
+    avg_smooth = moving_average(avg, smooth)
+    std_smooth = moving_average(std, smooth)
     for doc in x:
-      y_smooth[doc] = moving_average(y[doc])
+      y_smooth[doc] = moving_average(y[doc], smooth)
 
     import math
 
@@ -701,7 +718,7 @@ def save_query_time_conditional(similar, fname = ".html", binsize = 1):
     fig = figure()
     count = 0
     for doc in x:
-      fig.line(x[doc][1:-1], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
+      fig.line(x[doc][:-smooth], y_smooth[doc], legend = doc, line_width = 2, line_color = lc[count])
       count += 1
     fig.xaxis.formatter = DatetimeTickFormatter()
     fig.xaxis.major_label_orientation = math.pi/4.0
@@ -725,8 +742,8 @@ def save_query_time_conditional(similar, fname = ".html", binsize = 1):
 
     output_file("query_avg_smooth_%s%s" % (word2, fname), title = "")
     fig = figure()
-    fig.line(x[anyDoc][1:-1], avg_smooth, legend = "Average", line_width = 2, line_color = 'blue')
-    fig.line(x[anyDoc][1:-1], std_smooth, legend = "Std. dev.", line_width = 1, line_color = 'red')
+    fig.line(x[anyDoc][:-smooth], avg_smooth, legend = "Average", line_width = 2, line_color = 'blue')
+    fig.line(x[anyDoc][:-smooth], std_smooth, legend = "Std. dev.", line_width = 1, line_color = 'red')
     fig.xaxis.formatter = DatetimeTickFormatter()
     fig.xaxis.major_label_orientation = math.pi/4.0
     fig.xaxis.axis_label = "Date"

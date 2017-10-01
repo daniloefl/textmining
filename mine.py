@@ -36,6 +36,8 @@ sim_query = [
             ]
 
 def main():
+  binsize = 2 # days on which pages are grouped on -- coverage of a news within the same bin of 2 days is taken as a single item
+  smooth = 4 # smooth time-dependent results taking a moving average of 4 days, to avoid fluctuations
 
   # first of all transform HTML into plain text
   # to remove all the HTML tags
@@ -49,7 +51,6 @@ def main():
 
   doc_set = []
   doc_id = []
-  binsize = 2 # days
   for s in utils.sources:
     source = utils.sources[s]
     doc = ""
@@ -238,8 +239,8 @@ def main():
     print "</table>"
 
   print "</body></html>"
-  utils.save_query_time(similar, ".html")
-  utils.save_query_time_conditional(similar, ".html")
+  utils.save_query_time(similar, ".html", smooth)
+  utils.save_query_time_conditional(similar, ".html", smooth)
   
 
 if __name__ == "__main__":
